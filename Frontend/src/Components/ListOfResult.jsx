@@ -1,81 +1,132 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import "../Styles/ListOfResult.css";
+import { useNavigate } from "react-router-dom";
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
 
-function ListOfResult() {
-  // Guarda e atualiza as informações recebidas do backend.
+const ListOfResult = () => {
   const [result, setResult] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [dataToEdit, setDataToEdit] = useState({
+    TransactionID: null,
+    TruckName: "",
+    SellerName: "",
+    BuyerName: "",
+    GoodsName: "",
+    Specification: "",
+    Gross: "",
+    Tare: "",
+    Net: "",
+  });
 
-  // Faz a solicitação das informações no backend quando a página é carrgada.
+  const navigate = useNavigate();
+
   useEffect(() => {
     fetch("http://localhost:3000")
       .then((res) => res.json())
-      .then((data) => {
-        setResult(data);
-        console.log(data);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+      .then((data) => setResult(data))
+      .catch((err) => console.error(err));
   }, []);
 
-  // Detecta em qual cartão de informação estamos clicando, obém o ProductID e o envia para o backend, que será responsável por excluir os dados do bd.
+  const handleEditClick = (item) => {
+    setDataToEdit(item);
+    setShowModal(true);
+  };
 
   const handleDelete = (e) => {
-    console.log(e.target.name);
-    // Pergunta se temos certeza de que desejamos excluir as informaçõe.
-    if (confirm("Tem certeza que deseja excluir estas informações?")) {
-      // Se confirmar a pergunta anterior, envia as informações para o backend.
-      console.log("Informação excluída");
+    if (window.confirm("Are you sure you want to delete this information?")) {
       fetch("http://localhost:3000", {
         method: "DELETE",
-        body: JSON.stringify({
-          ["ProductID"]: e.target.name,
-        }),
+        body: JSON.stringify({ TransactionID: e.target.name }),
         headers: { "Content-Type": "application/json" },
-      });
-      // Atualiza a página para atualizar os dados do bd.
-      window.location.reload();
-    } else {
-      console.log("Pedido de exclusão cancelado.");
+      }).then(() => window.location.reload());
     }
   };
 
+  const print = (item) => {
+    navigate("/printpage", { state: { item } });
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDataToEdit((prevData) => {
+      const updatedData = { ...prevData, [name]: value };
+      if (name === "Gross" || name === "Tare") {
+        const gross = parseFloat(updatedData.Gross) || 0;
+        const tare = parseFloat(updatedData.Tare) || 0;
+        updatedData.Net = gross - tare;
+      }
+      return updatedData;
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const method = dataToEdit.TransactionID ? "PUT" : "POST";
+
+    fetch("http://localhost:3000", {
+      method,
+      body: JSON.stringify(dataToEdit),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then(() => {
+        setShowModal(false);
+        window.location.reload();
+      })
+      .catch((err) => console.error("Failed to save data:", err));
+  };
+
   return (
-    <div className="results">
-      <h1 className="title_results">Resultados</h1>
-      <section className="section_all_results">
-        {result.map((item, index) => (
-          <section key={index} className="section_individual_result">
-            <article>
-              <p className="p_results">Product Name</p>
-              <p className="product_result">{item.ProductName}</p>
-              <p className="p_results">Supplier ID</p>
-              <p className="product_result">{item.SupplierID}</p>
-              <p className="p_results">Category ID</p>
-              <p className="product_result">{item.CategoryID}</p>
-              <p className="p_results">Unit</p>
-              <p className="product_result">{item.Unit}</p>
-              <p className="p_results">Price</p>
-              <p className="product_result">{item.Price}</p>
-            </article>
-            <div className="div_buttons_results">
-              <Link to={`/modify/${item.ProductID}`}>
-                <button className="modify_results">modifcar</button>
-              </Link>
-              <button
-                name={item.ProductID}
-                onClick={handleDelete}
-                className="delete_results"
-              >
-                Excluir
-              </button>
-            </div>
-          </section>
-        ))}
-      </section>
+    <div className="container">
+      <h1>Logs</h1>
+      {result.map((item) => (
+        <section key={item.TransactionID} className="mb-3">
+          <Card>
+            <Card.Body>
+              ScaleID: RIO-00{item.TransactionID} {item.TruckName} {item.SellerName} {item.BuyerName} {item.GoodsName} {item.Specification} {item.Gross} {item.Tare} {item.Net}
+            </Card.Body>
+          </Card>
+          <div className="">
+            <Button variant="outline-warning" onClick={() => handleEditClick(item)}>
+              Edit
+            </Button>
+            <Button
+              className="ms-2"
+              name={item.TransactionID}
+              onClick={handleDelete}
+              variant="outline-danger"
+            >
+              Delete
+            </Button>
+            <Button
+              className="ms-2"
+              variant="outline-success"
+              onClick={() => print(item)} // Pass the item data
+            >
+              Print
+            </Button>
+          </div>
+        </section>
+      ))}
+
+      {/* Edit Modal */}
+      <Modal show={showModal} onHide={handleModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Record</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            {/* Form fields here */}
+          </Form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
-}
+};
 
 export default ListOfResult;

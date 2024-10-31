@@ -1,160 +1,174 @@
 const http = require("http");
 const sqlite3 = require("sqlite3").verbose();
 
-// Cria uma conexão com o banco de dados empresa.db si esta criado, si não, esse código criará uma db com esse nome.
-const db = new  sqlite3.Database("empresa.db", (err)=>{
-    if(err){
+// Creates a connection to the database. If it doesn’t exist, this code will create a database with this name.
+const db = new sqlite3.Database("truck_transactions.db", (err) => {
+    if (err) {
         console.error(err);
-    }else{
-        console.log("Conexão estabelecida com sucesso.")
+    } else {
+        console.log("Connection established successfully.");
     }
 });
 
-// Cria uma tabela cao ela não exista no banco de dados empresa.db.
-
+// Creates a table if it does not exist in the truck_transactions.db database.
 db.run(
-    `CREATE TABLE IF NOT EXISTS Produtos(
-        ProductID INTEGER PRIMARY KEY AUTOINCREMENT,
-        ProductName TEXT,
-        SupplierID INTEGER,
-        CategoryID INTEGER,
-        Unit TEXT,
-        Price FLOAT
+    `CREATE TABLE IF NOT EXISTS TruckTransactions(
+        TransactionID INTEGER PRIMARY KEY AUTOINCREMENT,
+        TruckName TEXT,
+        SellerName TEXT,
+        BuyerName TEXT,
+        GoodsName TEXT,
+        Specification TEXT,
+        Gross FLOAT,
+        Tare FLOAT,
+        Net FLOAT
     )`,
-    (err)=>{
-        if(err){
+    (err) => {
+        if (err) {
             console.error(err);
-        }else{
-            console.log("Tabela criada com sucesso.");
+        } else {
+            console.log("Table created successfully.");
         }
     }
 );
-  
-// Realiza uma consulta de todas as informações da tabela produtos.
-const search = (callback)=>{
-    db.all("SELECT * FROM produtos", (err, rows)=>{
-        if(err){
+
+// Executes a query to retrieve all information from the TruckTransactions table.
+const search = (callback) => {
+    db.all("SELECT * FROM TruckTransactions", (err, rows) => {
+        if (err) {
             console.error(err);
-        }else{
+        } else {
             callback(rows);
         }
     });
 };
-// Prepara uma consulta para adicionar dados ao nosso bd.
+
+// Prepares a query to add data to the TruckTransactions table.
 const insertData = db.prepare(
-    `INSERT INTO Produtos (ProductName, SupplierID, CategoryID, Unit, Price)
-    VALUES (?, ?, ?, ?, ?)`,
-    (err)=>{
-        if(err){
+    `INSERT INTO TruckTransactions (TruckName, SellerName, BuyerName, GoodsName, Specification, Gross, Tare, Net)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    (err) => {
+        if (err) {
             console.error(err);
-        }else{
-            console.log("Dados inseridos com sucesso.");
+        } else {
+            console.log("Data inserted successfully.");
         }
     }
 );
 
-// Prepara uma consulta para excluir dados do bd.
+// Prepares a query to delete data from the TruckTransactions table.
 const deleteData = db.prepare(
-    `DELETE FROM Produtos WHERE ProductID == ?`,
-    (err)=>{
-        if(err){
+    `DELETE FROM TruckTransactions WHERE TransactionID == ?`,
+    (err) => {
+        if (err) {
             console.error(err);
-        }else{
-            console.log("Dados excluídos com sucesso.");
+        } else {
+            console.log("Data deleted successfully.");
         }
     }
 );
 
-// Prepara uma consulta para modificar os dados do bd.
+// Prepares a query to modify data in the TruckTransactions table.
 const modifyData = db.prepare(
-    `UPDATE Produtos
-      SET ProductName = ?,
-          SupplierID = ?,
-          CategoryID = ?,
-          Unit = ?,
-          Price = ?
-     WHERE ProductID = ?`,
-     (err)=>{
-        if(err){
+    `UPDATE TruckTransactions
+      SET TruckName = ?,
+          SellerName = ?,
+          BuyerName = ?,
+          GoodsName = ?,
+          Specification = ?,
+          Gross = ?,
+          Tare = ?,
+          Net = ?
+     WHERE TransactionID = ?`,
+     (err) => {
+        if (err) {
             console.error(err);
-        }else{
-            console.log("Dados modificados com sucesso.");
+        } else {
+            console.log("Data modified successfully.");
         }
      }
 );
 
-// Agora vamos criar o servidor e trazer as informações do bd para o servidor.
-const server = http.createServer((req, res)=>{
-    // Para permitir os CORS e que não tenha problema en este exemplo.
+// Now we create the server and bring the database information to the server.
+const server = http.createServer((req, res) => {
+    // Allow CORS to avoid issues in this example.
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    // Retorna todas as informações para o servidor.
-    search((result)=>{
+
+    // Returns all information to the server.
+    search((result) => {
         res.write(JSON.stringify(result));
         res.end();
     });
 
-    
-    // Verifica se é uma solicitação com o método POST.
-    if(req.method === "POST"){
+    // Checks if it is a request with the POST method.
+    if (req.method === "POST") {
         let body = "";
-        // Recebe as informações enviadas para o servidor.
-        req.on("data", (chunk)=>{
+        // Receives the information sent to the server.
+        req.on("data", (chunk) => {
             body += chunk;
         });
-        req.on("end", ()=>{
-            // Deserializa as informações.
+        req.on("end", () => {
+            // Deserialize the information.
             const parsedBody = JSON.parse(body);
             console.log(parsedBody);
-            // Usa a consulta preparada para inserir os dados recebidos do Frontend.
+            // Uses the prepared query to insert data received from the Frontend.
             insertData.run(
-                parsedBody.ProductName,
-                parsedBody.SupplierID,
-                parsedBody.CategoryID,
-                parsedBody.Unit,
-                parsedBody.Price
+                parsedBody.TruckName,
+                parsedBody.SellerName,
+                parsedBody.BuyerName,
+                parsedBody.GoodsName,
+                parsedBody.Specification,
+                parsedBody.Gross,
+                parsedBody.Tare,
+                parsedBody.Net
             );
-            console.log("Dados criados com sucesso.");
+            console.log("Data created successfully.");
         });
 
-        
-    // Verifica se é uma solicitação com o método DELETE.
-    }else if(req.method === "DELETE"){
+    // Checks if it is a request with the DELETE method.
+    } else if (req.method === "DELETE") {
         let body = "";
-        req.on("data", (chunk)=>{
+        req.on("data", (chunk) => {
             body += chunk;
         });
-        req.on("end", ()=>{
+        req.on("end", () => {
             const parsedBody = JSON.parse(body);
             console.log(parsedBody);
-            // Usamos a consulta preparada para excluir os dados que o Frontend indicar.
-            deleteData.run(parsedBody.ProductID);
-            console.log("Dados excluídos com sucesso.");
+            // Uses the prepared query to delete data as indicated by the Frontend.
+            deleteData.run(parsedBody.TransactionID);
+            console.log("Data deleted successfully.");
         });
-    // Verifica se é uma solicitação com o método PUT.
-    }else if(req.method === "PUT"){
+
+    // Checks if it is a request with the PUT method.
+    } else if (req.method === "PUT") {
         let body = "";
-        req.on("data", (chunk)=>{
+        req.on("data", (chunk) => {
             body += chunk;
         });
-        req.on("end", ()=>{
+        req.on("end", () => {
             const parsedBody = JSON.parse(body);
             console.log(parsedBody);
-            // Usamos a consulta preparada para modificar os dados recebidos do Frontend.
+            // Uses the prepared query to modify the data received from the Frontend.
             modifyData.run(
-                parsedBody.ProductName,
-                parsedBody.SupplierID,
-                parsedBody.CategoryID,
-                parsedBody.Unit,
-                parsedBody.Price,
-                parsedBody.ProductID
+                parsedBody.TruckName,
+                parsedBody.SellerName,
+                parsedBody.BuyerName,
+                parsedBody.GoodsName,
+                parsedBody.Specification,
+                parsedBody.Gross,
+                parsedBody.Tare,
+                parsedBody.Net,
+                parsedBody.TransactionID
             );
-            console.log("Dados modificados com sucesso.");
+            console.log("Data modified successfully.");
         });
     }
-
 });
+
 const port = 3000;
-server.listen(port);
-console.log(`Servidor escutando no porto ${port}`)
+const host = '0.0.0.0';
+server.listen(port, host, () => {
+  console.log(`Server listening on http://${host}:${port}`);
+});

@@ -1,6 +1,6 @@
 import FormData from "../Components/FormData";
 import { useNavigate } from "react-router-dom";
-import Footer from "../Components/Footer";
+import Button from 'react-bootstrap/Button';
 import Header from "../Components/Header";
 
 function RouteData() {
@@ -16,14 +16,16 @@ function RouteData() {
         }}
       >
         <FormData />
-        <button
-          style={{ width: "20%", margin: "0 auto" }}
+        {/* <button
+          
           onClick={() => navigate("/")}
         >
           Go Back
-        </button>
+        </button> */}
+
+        <Button className="mt-2 mb-2" variant="outline-primary" onClick={() => navigate("/")} >CANCEL</Button>
       </div>
-      <Footer />
+      
     </>
   );
 }

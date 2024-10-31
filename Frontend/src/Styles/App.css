@@ -1,14 +1,66 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    overflow-x: hidden;
-}
-main{
+  }
+  
+  main {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100vw;
     min-height: 83.9vh;
-}
+  }
+  
+  .print-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%; /* Ensures container takes full width without overflow */
+    overflow: hidden; /* Hides any overflow */
+  }
+  
+  .heading {
+    font-weight: bold;
+    font-size: 20px; /* Adjust the font size if needed */
+    text-align: center;
+  }
+  
+  table {
+    width: 80%; /* Reduced slightly to prevent potential overflow */
+    margin: 0 auto;
+    border-collapse: collapse;
+  }
+  
+  table td {
+    padding: 8px;
+    font-size: 14px;
+  }
+  
+  button {
+    display: block;
+    margin: 20px auto;
+    padding: 8px 16px;
+    font-size: 16px;
+  }
+  
+  .bordered {
+    border-bottom: 1px solid black;
+    padding: 8px;
+  }
+  
+  .print-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    page-break-inside: avoid;
+  }
+  
+  .print-table {
+    width: 100%; /* Ensures full container width */
+    margin-bottom: 20px;
+    border-collapse: collapse;
+  }
+  

@@ -1,31 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../Styles/FormData.css";
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 function FormData() {
-  // Guarda as informações do formulário para enviar ao backend.
+  // State for form data
   const [result, setResult] = useState([]);
   const [dataToInsert, setDataToInsert] = useState({
-    ProductName: "",
-    SupplierID: "",
-    CategoryID: "",
-    Unit: "",
-    Price: "",
+    TruckName: "",
+    SellerName: "",
+    BuyerName: "",
+    GoodsName: "",
+    Specification: "",
+    Gross: "",
+    Tare: "",
+    Net: "",
   });
   const [redirected, setRedirected] = useState(false);
 
   const navigate = useNavigate();
 
-  //   Faz a solicitação das informações no backend quando a página é carregada.
+  
+
+  // Fetches data from backend on page load
   useEffect(() => {
     fetch("http://localhost:3000")
       .then((res) => res.json())
       .then((data) => {
         setResult(data);
 
-        // Procura o item com o mesmo ProductID que o pathname.
+        // Find the item with the same TransactionID as the pathname
         const foundItem = data.find(
-          (item) => window.location.pathname === `/modify/${item.ProductID}`
+          (item) => window.location.pathname === `/modify/${item.TransactionID}`
         );
 
         if (foundItem) {
@@ -33,102 +39,150 @@ function FormData() {
             ...prevState,
             ...foundItem,
           }));
+        } else if (!redirected) {
+          setRedirected(true);
+          navigate("/");
+        }
+      })
+      .catch((err) => console.error(err));
+  }, [redirected, navigate]);
+
+  // Submits form data to backend
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const foundItem = result.find(
+      (item) => window.location.pathname === `/modify/${item.TransactionID}`
+    );
+    const method = foundItem ? "PUT" : "POST";
+  
+    fetch("http://localhost:3000", {
+      method,
+      body: JSON.stringify(dataToInsert),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (response.ok) {
+          // If data sent successfully, wait 2 seconds and reload
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
         } else {
-          // Se não encontrar o item, redireciona para a página principal.
-          if (!redirected) {
-            setRedirected(true);
-            navigate("/");
-          }
+          // If response not OK, show alert
+          alert("Data not sent to the server. Please try again.");
         }
       })
       .catch((err) => {
-        console.error(err);
+        console.error("Failed to save data:", err);
+        alert("Data not sent to the server. Please check your network or try again.");
       });
-  }, []);
-
-  // Envia as informações para o backend quando o botão de enviar é clicado.
-  const handleSubmit = (e) => {
-    const foundItem = result.find(
-      (item) => window.location.pathname === `/modify/${item.ProductID}`
-    );
-    if (foundItem) {
-      fetch("http://localhost:3000", {
-        method: "PUT",
-        body: JSON.stringify(dataToInsert),
-        headers: { "Content-Type": "application/json" },
-      });
-      navigate("/");
-    } else {
-      fetch("http://localhost:3000", {
-        method: "POST",
-        body: JSON.stringify(dataToInsert),
-        headers: { "Content-Type": "application/json" },
-      });
-    }
   };
-  // Armazena as informações no estado conforme são digitados.
+
+  // Updates state and calculates Net dynamically
   const handleChange = (e) => {
-    setDataToInsert({
-      ...dataToInsert,
-      [e.target.name]: e.target.value,
+    const { name, value } = e.target;
+
+    setDataToInsert((prevData) => {
+      const newData = { ...prevData, [name]: value };
+
+      // Calculate Net as Gross - Tare if both fields have values
+      if (name === "Gross" || name === "Tare") {
+        const gross = parseFloat(newData.Gross) || 0;
+        const tare = parseFloat(newData.Tare) || 0;
+        newData.Net = gross - tare;
+      }
+
+      return newData;
     });
   };
 
   return (
-    <div className="form_div">
-      <form onSubmit={handleSubmit} className="form">
-        <input
-          className="form_input"
-          type="text"
-          value={dataToInsert.ProductName}
-          name="ProductName"
-          onChange={handleChange}
-          placeholder="Product Name"
-          required
-          autoComplete="none"
-        />
-        <input
-          className="form_input"
-          type="number"
-          value={dataToInsert.SupplierID}
-          name="SupplierID"
-          onChange={handleChange}
-          placeholder="Supplier ID"
-          required
-          autoComplete="none"
-        />
-        <input
-          className="form_input"
-          type="number"
-          value={dataToInsert.CategoryID}
-          name="CategoryID"
-          onChange={handleChange}
-          placeholder="Category ID"
-          required
-          autoComplete="none"
-        />
-        <input
-          className="form_input"
-          type="text"
-          value={dataToInsert.Unit}
-          name="Unit"
-          onChange={handleChange}
-          placeholder="Unit"
-          required
-          autoComplete="none"
-        />
-        <input
-          className="form_input"
-          type="number"
-          value={dataToInsert.Price}
-          name="Price"
-          onChange={handleChange}
-          placeholder="Price"
-          required
-          autoComplete="none"
-        />
-        <button className="form_button">Save</button>
-      </form>
+    <div className="mt-2">
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3" controlId="formTruckName">
+          <Form.Control
+            type="text"
+            placeholder="Truck Name"
+            name="TruckName"
+            value={dataToInsert.TruckName}
+            onChange={handleChange}
+            required
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formSellerName">
+          <Form.Control
+            type="text"
+            placeholder="Seller Name"
+            name="SellerName"
+            value={dataToInsert.SellerName}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formBuyerName">
+          <Form.Control
+            type="text"
+            placeholder="Buyer Name"
+            name="BuyerName"
+            value={dataToInsert.BuyerName}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formGoodsName">
+          <Form.Control
+            type="text"
+            placeholder="Goods Name"
+            name="GoodsName"
+            value={dataToInsert.GoodsName}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formSpecification">
+          <Form.Control
+            type="text"
+            placeholder="Specification"
+            name="Specification"
+            value={dataToInsert.Specification}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formGross">
+          <Form.Control
+            type="number"
+            placeholder="Gross Weight"
+            name="Gross"
+            value={dataToInsert.Gross}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formTare">
+          <Form.Control
+            type="number"
+            placeholder="Tare Weight"
+            name="Tare"
+            value={dataToInsert.Tare}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formNet">
+          <Form.Control
+            type="number"
+            placeholder="Net Weight"
+            name="Net"
+            value={dataToInsert.Net}
+            readOnly // Prevents manual input as it is calculated
+          />
+        </Form.Group>
+
+        <Button variant="outline-primary" type="submit">
+          Save
+        </Button>
+      </Form>
     </div>
   );
 }
