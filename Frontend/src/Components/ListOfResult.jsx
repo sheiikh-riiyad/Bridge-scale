@@ -44,9 +44,40 @@ const ListOfResult = () => {
     }
   };
 
-  const print = (item) => {
-    navigate("/printpage", { state: { item } });
-  };
+  const print = async (item) => {
+    try {
+        // Step 1: Send the item data to the second database (port 3001)
+        const postResponse = await fetch("http://localhost:3001", {
+            method: "POST",
+            body: JSON.stringify(item),
+            headers: { "Content-Type": "application/json" },
+        });
+
+        if (!postResponse.ok) {
+            throw new Error("Failed to insert data on port 3001");
+        }
+
+        // Step 2: Remove the printed item from the frontend state
+        setResult((prevResult) => prevResult.filter((data) => data.TransactionID !== item.TransactionID));
+
+        // Step 3: Delete the item from the first database (port 3000)
+        const deleteResponse = await fetch("http://localhost:3000", {
+            method: "DELETE",
+            body: JSON.stringify({ TransactionID: item.TransactionID }),
+            headers: { "Content-Type": "application/json" },
+        });
+
+        if (!deleteResponse.ok) {
+            throw new Error("Failed to delete data on port 3000");
+        }
+
+        // Navigate to the print page
+        navigate("/printpage", { state: { item } });
+    } catch (error) {
+        console.error("Error handling print request:", error);
+    }
+};
+
 
   const handleModalClose = () => {
     setShowModal(false);

@@ -8,7 +8,7 @@ function Console() {
   const [searchQuery, setSearchQuery] = useState(""); // Search query state
 
   useEffect(() => {
-    fetch("http://localhost:3000")
+    fetch("http://localhost:3001")
       .then((res) => res.json())
       .then((data) => setResult(data))
       .catch((err) => console.error(err));

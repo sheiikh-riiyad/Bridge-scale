@@ -65,7 +65,7 @@ function FormData() {
           // If data sent successfully, wait 2 seconds and reload
           setTimeout(() => {
             window.location.reload();
-          }, 2000);
+          }, 1000);
         } else {
           // If response not OK, show alert
           alert("Data not sent to the server. Please try again.");
