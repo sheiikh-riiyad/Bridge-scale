@@ -21,7 +21,8 @@ db.run(
         Specification TEXT,
         Gross FLOAT,
         Tare FLOAT,
-        Net FLOAT
+        Net FLOAT,
+        Date TEXT
     )`,
     (err) => {
         if (err) {
@@ -45,8 +46,8 @@ const search = (callback) => {
 
 // Prepares a query to add data to the TruckTransactions table.
 const insertData = db.prepare(
-    `INSERT INTO TruckTransactions (TruckName, SellerName, BuyerName, GoodsName, Specification, Gross, Tare, Net)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO TruckTransactions (TruckName, SellerName, BuyerName, GoodsName, Specification, Gross, Tare, Net, Date)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     (err) => {
         if (err) {
             console.error(err);
@@ -122,7 +123,8 @@ const server = http.createServer((req, res) => {
                 parsedBody.Specification,
                 parsedBody.Gross,
                 parsedBody.Tare,
-                parsedBody.Net
+                parsedBody.Net,
+                parsedBody.Date
             );
             console.log("Data created successfully.");
         });

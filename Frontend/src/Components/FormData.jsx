@@ -15,6 +15,7 @@ function FormData() {
     Gross: "",
     Tare: "",
     Net: "",
+    Date: new Date().toISOString().split("T")[0] // Sets today's date
   });
   const [redirected, setRedirected] = useState(false);
 
@@ -50,31 +51,31 @@ function FormData() {
   // Submits form data to backend
   const handleSubmit = (e) => {
     e.preventDefault();
-    const foundItem = result.find(
-      (item) => window.location.pathname === `/modify/${item.TransactionID}`
-    );
-    const method = foundItem ? "PUT" : "POST";
+  
+    // Update Date field on form submission
+    const dataWithDate = {
+      ...dataToInsert,
+      Date: new Date().toISOString().split("T")[0] // Format: YYYY-MM-DD
+    };
   
     fetch("http://localhost:3000", {
-      method,
-      body: JSON.stringify(dataToInsert),
+      method: "POST",
+      body: JSON.stringify(dataWithDate),
       headers: { "Content-Type": "application/json" },
     })
-      .then((response) => {
-        if (response.ok) {
-          // If data sent successfully, wait 2 seconds and reload
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        } else {
-          // If response not OK, show alert
-          alert("Data not sent to the server. Please try again.");
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to save data:", err);
-        alert("Data not sent to the server. Please check your network or try again.");
-      });
+    .then((response) => {
+      if (response.ok) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        alert("Data not sent to the server. Please try again.");
+      }
+    })
+    .catch((err) => {
+      console.error("Failed to save data:", err);
+      alert("Data not sent to the server. Please check your network or try again.");
+    });
   };
 
   // Updates state and calculates Net dynamically
@@ -180,7 +181,7 @@ function FormData() {
         </Form.Group>
 
         <Button variant="outline-primary" type="submit">
-          Save
+          Register
         </Button>
       </Form>
     </div>

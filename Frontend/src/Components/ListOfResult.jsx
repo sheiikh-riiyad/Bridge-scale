@@ -18,6 +18,7 @@ const ListOfResult = () => {
     Gross: "",
     Tare: "",
     Net: "",
+    
   });
 
   const navigate = useNavigate();
@@ -119,7 +120,7 @@ const ListOfResult = () => {
         <section key={item.TransactionID} className="mb-3">
           <Card>
             <Card.Body>
-              ScaleID: RIO-00{item.TransactionID} {item.TruckName} {item.SellerName} {item.BuyerName} {item.GoodsName} {item.Specification} {item.Gross} {item.Tare} {item.Net}
+              ScaleID: RIO-00{item.TransactionID} {item.Date} {item.TruckName} {item.SellerName} {item.BuyerName} {item.GoodsName} {item.Specification} {item.Gross} {item.Tare} {item.Net}
             </Card.Body>
           </Card>
           <div className="">
@@ -127,7 +128,7 @@ const ListOfResult = () => {
               Edit
             </Button>
             <Button
-              className="ms-2"
+              className=""
               name={item.TransactionID}
               onClick={handleDelete}
               variant="outline-danger"
@@ -135,7 +136,7 @@ const ListOfResult = () => {
               Delete
             </Button>
             <Button
-              className="ms-2"
+              className=""
               variant="outline-success"
               onClick={() => print(item)} // Pass the item data
             >
@@ -152,7 +153,100 @@ const ListOfResult = () => {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
-            {/* Form fields here */}
+          <Form onSubmit={handleSubmit}>
+  <Form.Group controlId="formTruckName">
+    <Form.Label>Truck Name</Form.Label>
+    <Form.Control
+      type="text"
+      name="TruckName"
+      value={dataToEdit.TruckName}
+      onChange={handleChange}
+      placeholder="Enter Truck Name"
+    />
+  </Form.Group>
+
+  <Form.Group controlId="formSellerName" className="mt-3">
+    <Form.Label>Seller Name</Form.Label>
+    <Form.Control
+      type="text"
+      name="SellerName"
+      value={dataToEdit.SellerName}
+      onChange={handleChange}
+      placeholder="Enter Seller Name"
+    />
+  </Form.Group>
+
+  <Form.Group controlId="formBuyerName" className="mt-3">
+    <Form.Label>Buyer Name</Form.Label>
+    <Form.Control
+      type="text"
+      name="BuyerName"
+      value={dataToEdit.BuyerName}
+      onChange={handleChange}
+      placeholder="Enter Buyer Name"
+    />
+  </Form.Group>
+
+  <Form.Group controlId="formGoodsName" className="mt-3">
+    <Form.Label>Goods Name</Form.Label>
+    <Form.Control
+      type="text"
+      name="GoodsName"
+      value={dataToEdit.GoodsName}
+      onChange={handleChange}
+      placeholder="Enter Goods Name"
+    />
+  </Form.Group>
+
+  <Form.Group controlId="formSpecification" className="mt-3">
+    <Form.Label>Specification</Form.Label>
+    <Form.Control
+      type="text"
+      name="Specification"
+      value={dataToEdit.Specification}
+      onChange={handleChange}
+      placeholder="Enter Specification"
+    />
+  </Form.Group>
+
+  <Form.Group controlId="formGross" className="mt-3">
+    <Form.Label>Gross Weight</Form.Label>
+    <Form.Control
+      type="number"
+      name="Gross"
+      value={dataToEdit.Gross}
+      onChange={handleChange}
+      placeholder="Enter Gross Weight"
+    />
+  </Form.Group>
+
+  <Form.Group controlId="formTare" className="mt-3">
+    <Form.Label>Tare Weight</Form.Label>
+    <Form.Control
+      type="number"
+      name="Tare"
+      value={dataToEdit.Tare}
+      onChange={handleChange}
+      placeholder="Enter Tare Weight"
+    />
+  </Form.Group>
+
+  <Form.Group controlId="formNet" className="mt-3">
+    <Form.Label>Net Weight</Form.Label>
+    <Form.Control
+      type="number"
+      name="Net"
+      value={dataToEdit.Net}
+      onChange={handleChange}
+      placeholder="Net Weight (calculated)"
+      readOnly
+    />
+  </Form.Group>
+
+  <Button onClick={handleSubmit} variant="outline-success" type="submit" className="mt-4">
+    Save Changes
+  </Button>
+</Form>
           </Form>
         </Modal.Body>
       </Modal>

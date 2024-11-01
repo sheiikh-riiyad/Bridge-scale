@@ -4,33 +4,40 @@ const sqlite3 = require("sqlite3").verbose();
 // Creates a connection to the database.
 const db = new sqlite3.Database("truck_transactions.db", (err) => {
     if (err) {
-        console.error(err);
+        console.error("Error connecting to database:", err);
     } else {
         console.log("Connection established successfully.");
+
+        // Creates the TruckTransactions table if it does not exist.
+        db.run(
+            `CREATE TABLE IF NOT EXISTS TruckTransactions(
+                TransactionID INTEGER PRIMARY KEY AUTOINCREMENT,
+                TruckName TEXT,
+                SellerName TEXT,
+                BuyerName TEXT,
+                GoodsName TEXT,
+                Specification TEXT,
+                Gross FLOAT,
+                Tare FLOAT,
+                Net FLOAT,
+                Date TEXT
+            )`,
+            (err) => {
+                if (err) {
+                    console.error("Error creating table:", err);
+                } else {
+                    console.log("Table created successfully.");
+
+                    // Prepare the insertData statement after table creation
+                    insertData = db.prepare(
+                        `INSERT INTO TruckTransactions (TruckName, SellerName, BuyerName, GoodsName, Specification, Gross, Tare, Net, Date)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+                    );
+                }
+            }
+        );
     }
 });
-
-// Creates the TruckTransactions table if it does not exist.
-db.run(
-    `CREATE TABLE IF NOT EXISTS TruckTransactions(
-        TransactionID INTEGER PRIMARY KEY AUTOINCREMENT,
-        TruckName TEXT,
-        SellerName TEXT,
-        BuyerName TEXT,
-        GoodsName TEXT,
-        Specification TEXT,
-        Gross FLOAT,
-        Tare FLOAT,
-        Net FLOAT
-    )`,
-    (err) => {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log("Table created successfully.");
-        }
-    }
-);
 
 // Retrieves all data from the TruckTransactions table.
 const search = (callback) => {
@@ -43,18 +50,8 @@ const search = (callback) => {
     });
 };
 
-// Prepares a query to add data to the TruckTransactions table.
-const insertData = db.prepare(
-    `INSERT INTO TruckTransactions (TruckName, SellerName, BuyerName, GoodsName, Specification, Gross, Tare, Net)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    (err) => {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log("Data insertion setup successful.");
-        }
-    }
-);
+// Declare insertData without initializing it
+let insertData;
 
 // Creates the server and handles only GET and POST requests.
 const server = http.createServer((req, res) => {
@@ -95,6 +92,7 @@ const server = http.createServer((req, res) => {
                 parsedBody.Gross,
                 parsedBody.Tare,
                 parsedBody.Net,
+                parsedBody.Date,
                 (err) => {
                     if (err) {
                         console.error("Error inserting data:", err);
