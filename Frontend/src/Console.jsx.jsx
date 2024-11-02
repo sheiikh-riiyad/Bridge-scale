@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Header from './Components/Header';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import * as XLSX from 'xlsx';
 
 function Console() {
   const [result, setResult] = useState([]);
@@ -21,11 +23,16 @@ function Console() {
     net: '',
   });
 
+  const printRef = useRef();
+
   useEffect(() => {
     fetch("http://localhost:3001")
       .then((res) => res.json())
-      .then((data) => setResult(data))
-      .catch((err) => console.error(err));
+      .then((data) => {
+        setResult(data);
+        console.log("Data fetched:", data); // Debug log
+      })
+      .catch((err) => console.error("Error fetching data:", err));
   }, []);
 
   const handleFilterChange = (e) => {
@@ -56,13 +63,29 @@ function Console() {
     );
   });
 
+  const handleExport = () => {
+    const worksheet = XLSX.utils.json_to_sheet(filteredResults);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Filtered Results');
+    XLSX.writeFile(workbook, 'filtered_results.xlsx');
+  };
+
+  const handlePrint = () => {
+    const printContent = printRef.current;
+    const WindowPrint = window.open('', '', 'width=900,height=650');
+    WindowPrint.document.write(printContent.outerHTML);
+    WindowPrint.document.close();
+    WindowPrint.focus();
+    WindowPrint.print();
+    WindowPrint.close();
+  };
+
   return (
     <>
       <Header />
       <div className="container">
         <h1>Logs</h1>
 
-        {/* Separate and Compact Search Fields */}
         <Form>
           <Row>
             <Col xs={6} sm={4} md={3} lg={2} className="mb-2">
@@ -92,16 +115,6 @@ function Console() {
                 placeholder="End Date"
                 name="endDate"
                 value={filters.endDate}
-                onChange={handleFilterChange}
-              />
-            </Col>
-            <Col xs={6} sm={4} md={3} lg={2} className="mb-2">
-              <Form.Control
-                size="sm"
-                type="text"
-                placeholder="Truck Name"
-                name="truckName"
-                value={filters.truckName}
                 onChange={handleFilterChange}
               />
             </Col>
@@ -175,20 +188,74 @@ function Console() {
                 onChange={handleFilterChange}
               />
             </Col>
+            <Col xs={6} sm={4} md={3} lg={2} className="mb-2">
+              <Button variant="outline-success" onClick={handlePrint}>Print</Button>
+              <Button variant="outline-success" className='export' onClick={handleExport}>Export</Button>
+            </Col>
           </Row>
         </Form>
 
-        {/* Display Filtered Results */}
-        {filteredResults.map((item) => (
-          <section key={item.TransactionID} className="mb-3">
-            <Card>
-              <Card.Body>
-                ScaleID: RIO-00{item.TransactionID} {item.Date} {item.TruckName} {item.SellerName} {item.BuyerName} {item.GoodsName} {item.Specification} {item.Gross} {item.Tare} {item.Net}
-              </Card.Body>
-            </Card>
-          </section>
-        ))}
+        {/* Print Area */}
+        <div ref={printRef} className="print-area">
+          <table className="table mt-4">
+            <thead>
+              <tr>
+                <th>ScaleID</th>
+                <th>Date</th>
+                <th>Truck Name</th>
+                <th>Seller Name</th>
+                <th>Buyer Name</th>
+                <th>Goods Name</th>
+                <th>Specification</th>
+                <th>Gross</th>
+                <th>Tare</th>
+                <th>Net</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredResults.length > 0 ? (
+                filteredResults.map((item) => (
+                  <tr key={item.TransactionID}>
+                    <td>RIO-00{item.TransactionID}</td>
+                    <td>{item.Date}</td>
+                    <td>{item.TruckName}</td>
+                    <td>{item.SellerName}</td>
+                    <td>{item.BuyerName}</td>
+                    <td>{item.GoodsName}</td>
+                    <td>{item.Specification}</td>
+                    <td>{item.Gross}</td>
+                    <td>{item.Tare}</td>
+                    <td>{item.Net}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="10">No data available for the selected filters.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      {/* Print-only styling */}
+      <style>{`
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          .print-area, .print-area * {
+            visibility: visible;
+          }
+          .print-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+          }
+        }
+      `}</style>
     </>
   );
 }

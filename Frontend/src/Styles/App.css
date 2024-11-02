@@ -70,3 +70,20 @@ table td {
   margin-bottom: 20px;
   border-collapse: collapse;
 }
+.export{
+  
+  float: right;
+}
+.navbar{
+  background-color: black;
+}
+.navbar-toggler{
+  background-color: #ffffff;
+}
+.navbar-toggler:active{
+  background-color: green;
+}
+.navbar-toggler:hover{
+  background-color: rgb(68, 68, 251);
+  transition: 0.2s;
+}

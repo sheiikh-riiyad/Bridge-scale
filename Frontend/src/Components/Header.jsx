@@ -4,7 +4,7 @@ import Navbar from 'react-bootstrap/Navbar';
 
 function Header() {
   return (
-    <Navbar expand="lg" className="bg-dark text-white">
+    <Navbar expand="lg" className="navbar ">
       <Container>
         <Navbar.Brand href="/" className="text-white">Rio Industrial Area</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />

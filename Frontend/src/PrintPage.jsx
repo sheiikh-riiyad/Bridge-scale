@@ -25,11 +25,13 @@ function PrintPage() {
           <tr>
             <td colSpan="6" style={{ textAlign: 'center' }}>Contact: +8801710666995</td>
           </tr>
-          <tr>
+<tr>
   <td colSpan="3" className="bordered" style={{ textAlign: 'left' }}>ScaleID: RIO-00{item.TransactionID}</td>
+  <td colSpan="3" className="bordered" style={{ textAlign: 'left' }}>Date:   {item.Date}</td>
 </tr>
 <tr>
   <td colSpan="6" className="bordered" style={{ textAlign: 'left' }}>Truck Name: {item.TruckName}</td>
+  
 </tr>
 <tr>
   <td colSpan="3" className="bordered" style={{ textAlign: 'left' }}>Seller Name: {item.SellerName}</td>
@@ -40,9 +42,9 @@ function PrintPage() {
   <td colSpan="3" className="bordered" style={{ textAlign: 'right' }}>Specification: {item.Specification}</td>
 </tr>
 <tr>
-  <td className="bordered" style={{ textAlign: 'left' }}>Gross Weight: {item.Gross}</td>
-  <td className="bordered" style={{ textAlign: 'center' }}>Tare Weight: {item.Tare}</td>
-  <td className="bordered" style={{ textAlign: 'right' }}>Net Weight: {item.Net}</td>
+  <td className="bordered" style={{ textAlign: 'left' }}>Gross Weight: {item.Gross}KG</td>
+  <td className="bordered" style={{ textAlign: 'center' }}>Tare Weight: {item.Tare}KG</td>
+  <td className="bordered" style={{ textAlign: 'right' }}>Net Weight: {item.Net}KG</td>
 </tr>
 <tr>
   <td colSpan="6" className="bordered" style={{ textAlign: 'right' }}>OPERATOR: SHEIKH RIYAD</td>
@@ -62,8 +64,9 @@ function PrintPage() {
           <tr>
             <td colSpan="6" style={{ textAlign: 'center' }}>Contact: +8801710666995</td>
           </tr>
-          <tr>
-  <td colSpan="3" className="bordered" style={{ textAlign: 'left' }}>ScaleID: RIO-00{item.TransactionID}</td>
+ <tr>
+ <td colSpan="3" className="bordered" style={{ textAlign: 'left' }}>ScaleID: RIO-00{item.TransactionID}</td>
+  <td colSpan="3" className="bordered" style={{ textAlign: 'left' }}>Date:   {item.Date}</td>
 </tr>
 <tr>
   <td colSpan="6" className="bordered" style={{ textAlign: 'left' }}>Truck Name: {item.TruckName}</td>
@@ -84,8 +87,8 @@ function PrintPage() {
 <tr>
   <td colSpan="6" className="bordered" style={{ textAlign: 'right' }}>OPERATOR: SHEIKH RIYAD</td>
 </tr>
-        </tbody>
-      </table>
+</tbody>
+</table>
       <button onClick={() => window.print()}>Print</button>
     </div>
   );
