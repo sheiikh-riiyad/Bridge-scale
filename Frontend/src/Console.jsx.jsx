@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import * as XLSX from 'xlsx';
+import { useNavigate } from "react-router-dom";
 
 function Console() {
   const [result, setResult] = useState([]);
@@ -21,19 +22,25 @@ function Console() {
     gross: '',
     tare: '',
     net: '',
+    GrossTime: "", 
+    TareTime: "",
+    Fees: "",
   });
 
   const printRef = useRef();
 
-  useEffect(() => {
-    fetch("http://localhost:3001")
-      .then((res) => res.json())
-      .then((data) => {
-        setResult(data);
-        console.log("Data fetched:", data); // Debug log
-      })
-      .catch((err) => console.error("Error fetching data:", err));
-  }, []);
+  fetch("http://localhost:3011")
+  .then((res) => {
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+    return res.json();
+  })
+  .then((data) => {
+    console.log("Data fetched:", data);
+    setResult(data);
+  })
+  .catch((err) => console.error("Error fetching data:", err));
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -79,6 +86,11 @@ function Console() {
     WindowPrint.print();
     WindowPrint.close();
   };
+ 
+const navigate = useNavigate();
+const print = (item) => {
+  navigate("/printpage", { state: { item } });
+};
 
   return (
     <>
@@ -208,8 +220,11 @@ function Console() {
                 <th>Goods Name</th>
                 <th>Specification</th>
                 <th>Gross</th>
+                <th>Gross Time</th>
                 <th>Tare</th>
+                <th>Tare Time</th>
                 <th>Net</th>
+                <th>Fees</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -225,9 +240,14 @@ function Console() {
                     <td>{item.GoodsName}</td>
                     <td>{item.Specification}</td>
                     <td>{item.Gross}</td>
+                    <td>{item.GrossTime}</td>
                     <td>{item.Tare}</td>
+                    <td>{item.TareTime}</td>
                     <td>{item.Net}</td>
-                  </tr>
+                    <td>{item.Fees}</td>
+                    <Button onClick={() => print(item)} style={{ marginBottom: "1px" }} variant="outline-success">
+                      Print
+                    </Button> </tr>
                 ))
               ) : (
                 <tr>
@@ -239,7 +259,7 @@ function Console() {
         </div>
       </div>
 
-      {/* Print-only styling */}
+    
       <style>{`
         @media print {
           body * {

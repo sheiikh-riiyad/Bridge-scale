@@ -15,7 +15,10 @@ function FormData() {
     Gross: "",
     Tare: "",
     Net: "",
-    Date: new Date().toISOString().split("T")[0] // Sets today's date
+    Date: new Date().toISOString().split("T")[0], // Sets today's date
+    GrossTime: "", 
+    TareTime: "",
+    Fees: "",
   });
   const [redirected, setRedirected] = useState(false);
 
@@ -25,7 +28,7 @@ function FormData() {
 
   // Fetches data from backend on page load
   useEffect(() => {
-    fetch("http://localhost:3000")
+    fetch("http://localhost:3001")
       .then((res) => res.json())
       .then((data) => {
         setResult(data);
@@ -58,7 +61,7 @@ function FormData() {
       Date: new Date().toISOString().split("T")[0] // Format: YYYY-MM-DD
     };
   
-    fetch("http://localhost:3000", {
+    fetch("http://localhost:3001", {
       method: "POST",
       body: JSON.stringify(dataWithDate),
       headers: { "Content-Type": "application/json" },
@@ -94,6 +97,39 @@ function FormData() {
 
       return newData;
     });
+  };
+
+  
+
+
+   // **Function to get Date & Time in format: YYYY-MM-DD HH:MM:SS AM/PM**
+   const getCurrentDateTime = () => {
+     const now = new Date();
+     const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const year = now.getFullYear();
+    const hours = now.getHours() % 12 || 12; // Convert to 12-hour format
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+    const ampm = now.getHours() >= 12 ? "PM" : "AM";
+
+    return `${day}-${month}-${year} ${hours}:${minutes}:${seconds} ${ampm}`;
+  };
+
+  // **Set Gross Date & Time**
+  const setGrossTime = () => {
+    setDataToInsert((prevData) => ({
+      ...prevData,
+      GrossTime: getCurrentDateTime(),
+    }));
+  };
+
+  // **Set Tare Date & Time**
+  const setTareTime = () => {
+    setDataToInsert((prevData) => ({
+      ...prevData,
+      TareTime: getCurrentDateTime(),
+    }));
   };
 
   return (
@@ -152,7 +188,7 @@ function FormData() {
 
         <Form.Group className="mb-3" controlId="formGross">
           <Form.Control
-            type="number"
+            type="text"
             placeholder="Gross Weight"
             name="Gross"
             value={dataToInsert.Gross}
@@ -162,7 +198,7 @@ function FormData() {
 
         <Form.Group className="mb-3" controlId="formTare">
           <Form.Control
-            type="number"
+            type="text"
             placeholder="Tare Weight"
             name="Tare"
             value={dataToInsert.Tare}
@@ -176,13 +212,32 @@ function FormData() {
             placeholder="Net Weight"
             name="Net"
             value={dataToInsert.Net}
-            readOnly // Prevents manual input as it is calculated
+            readOnly
           />
+        <input onChange={handleChange}  name="Fees" value={dataToInsert.Fees} style={{marginTop: "5px", width: "50px"}} type="number" placeholder="Fees" />
+
+        <input  type="text"
+            placeholder="Gross Time"
+            name="GrossTime"
+            value={dataToInsert.GrossTime}
+            readOnly 
+            style={{ marginLeft: "10px" }}  />
+        <input  type="text"
+            placeholder="Tare Time"
+            name="TareTime"
+            value={dataToInsert.TareTime}
+            readOnly 
+            style={{ marginLeft: "10px" }}/>
         </Form.Group>
 
-        <Button variant="outline-primary" type="submit">
+        <Button onClick={setGrossTime} style={{ margin: "5px" }} variant="outline-secondary">Gross</Button>
+        <Button onClick={setTareTime} variant="outline-secondary">Tare</Button>
+
+        <Button style={{marginLeft: "10px"}} variant="outline-primary" type="submit">
           Register
         </Button>
+
+       
       </Form>
     </div>
   );

@@ -18,16 +18,24 @@ const ListOfResult = () => {
     Gross: "",
     Tare: "",
     Net: "",
-    
+    GrossTime: "", 
+    TareTime: "",
+    Fees: "",
   });
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3000")
-      .then((res) => res.json())
-      .then((data) => setResult(data))
-      .catch((err) => console.error(err));
+    fetch("http://localhost:3001")
+      .then((res) => {
+        console.log("Response status:", res.status);
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Fetched data:", data);
+        setResult(data);
+      })
+      .catch((err) => console.error("Error fetching data:", err));
   }, []);
 
   const handleEditClick = (item) => {
@@ -37,7 +45,7 @@ const ListOfResult = () => {
 
   const handleDelete = (e) => {
     if (window.confirm("Are you sure you want to delete this information?")) {
-      fetch("http://localhost:3000", {
+      fetch("http://localhost:3001", {
         method: "DELETE",
         body: JSON.stringify({ TransactionID: e.target.name }),
         headers: { "Content-Type": "application/json" },
@@ -48,28 +56,28 @@ const ListOfResult = () => {
   const print = async (item) => {
     try {
         // Step 1: Send the item data to the second database (port 3001)
-        const postResponse = await fetch("http://localhost:3001", {
+        const postResponse = await fetch("http://localhost:3011", {
             method: "POST",
             body: JSON.stringify(item),
             headers: { "Content-Type": "application/json" },
         });
 
         if (!postResponse.ok) {
-            throw new Error("Failed to insert data on port 3001");
+            throw new Error("Failed to insert data on port 3011");
         }
 
         // Step 2: Remove the printed item from the frontend state
         setResult((prevResult) => prevResult.filter((data) => data.TransactionID !== item.TransactionID));
 
         // Step 3: Delete the item from the first database (port 3000)
-        const deleteResponse = await fetch("http://localhost:3000", {
+        const deleteResponse = await fetch("http://localhost:3001", {
             method: "DELETE",
             body: JSON.stringify({ TransactionID: item.TransactionID }),
             headers: { "Content-Type": "application/json" },
         });
 
         if (!deleteResponse.ok) {
-            throw new Error("Failed to delete data on port 3000");
+            throw new Error("Failed to delete data on port 3001");
         }
 
         // Navigate to the print page
@@ -101,7 +109,7 @@ const ListOfResult = () => {
     e.preventDefault();
     const method = dataToEdit.TransactionID ? "PUT" : "POST";
 
-    fetch("http://localhost:3000", {
+    fetch("http://localhost:3001", {
       method,
       body: JSON.stringify(dataToEdit),
       headers: { "Content-Type": "application/json" },
@@ -113,6 +121,37 @@ const ListOfResult = () => {
       .catch((err) => console.error("Failed to save data:", err));
   };
 
+
+// **Function to get Date & Time in format: YYYY-MM-DD HH:MM:SS AM/PM**
+const getCurrentDateTime = () => {
+ const now = new Date();
+ const day = String(now.getDate()).padStart(2, "0");
+ const month = String(now.getMonth() + 1).padStart(2, "0");
+ const year = now.getFullYear();
+ const hours = now.getHours() % 12 || 12; // Convert to 12-hour format
+ const minutes = String(now.getMinutes()).padStart(2, "0");
+ const seconds = String(now.getSeconds()).padStart(2, "0");
+ const ampm = now.getHours() >= 12 ? "PM" : "AM";
+
+ return `${day}-${month}-${year} ${hours}:${minutes}:${seconds} ${ampm}`;
+};
+
+// **Set Gross Date & Time**
+const setGrossTime = () => {
+  setDataToEdit((prevData) => ({
+    ...prevData,
+    GrossTime: getCurrentDateTime(),  // ✅ Correctly updating dataToEdit
+  }));
+};
+
+// **Set Tare Date & Time**
+const setTareTime = () => {
+  setDataToEdit((prevData) => ({
+    ...prevData,
+    TareTime: getCurrentDateTime(),  // ✅ Correctly updating dataToEdit
+  }));
+};
+
   return (
     <div className="container">
       <h1>Logs</h1>
@@ -120,7 +159,7 @@ const ListOfResult = () => {
         <section key={item.TransactionID} className="mb-3">
           <Card>
             <Card.Body>
-              ScaleID: RIO-00{item.TransactionID} {item.Date} {item.TruckName} {item.SellerName} {item.BuyerName} {item.GoodsName} {item.Specification} {item.Gross} {item.Tare} {item.Net}
+              ScaleID: RIO-00{item.TransactionID} {item.Date} {item.TruckName} {item.SellerName} {item.BuyerName} {item.GoodsName} {item.Specification} {item.Gross} {item.Tare} {item.Net} {item.GrossTime} {item.TareTime} {item.Fees}
             </Card.Body>
           </Card>
           <div className="">
@@ -241,8 +280,25 @@ const ListOfResult = () => {
       placeholder="Net Weight (calculated)"
       readOnly
     />
-  </Form.Group>
+    <input value={dataToEdit.Fees} onChange={handleChange} name="Fees"  style={{marginTop: "5px", width: "50px"}} type="text" placeholder="Fees" />
 
+    <input  type="text"
+            placeholder="Gross Time"
+            name="GrossTime"
+            value={dataToEdit.GrossTime} 
+            readOnly 
+            style={{ marginLeft: "10px" }}  />
+
+        <input  type="text"
+            placeholder="Tare Time"
+            name="TareTime"
+            value={dataToEdit.TareTime}
+            readOnly 
+            style={{ marginLeft: "10px" }}/>
+  </Form.Group>
+  <Button onClick={setGrossTime} style={{ margin: "5px" }} variant="outline-secondary">Gross</Button>
+  <Button onClick={setTareTime} variant="outline-secondary">Tare</Button>
+  
   <Button onClick={handleSubmit} variant="outline-success" type="submit" className="mt-4">
     Save Changes
   </Button>
