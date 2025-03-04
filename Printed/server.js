@@ -11,7 +11,7 @@ const db = new sqlite3.Database("truck_transactions.db", (err) => {
         // Creates the TruckTransactions table if it does not exist.
         db.run(
             `CREATE TABLE IF NOT EXISTS TruckTransactions(
-                TransactionID INTEGER PRIMARY KEY AUTOINCREMENT,
+                TransactionID INTEGER PRIMARY KEY,
                 TruckName TEXT,
                 SellerName TEXT,
                 BuyerName TEXT,
@@ -20,7 +20,10 @@ const db = new sqlite3.Database("truck_transactions.db", (err) => {
                 Gross FLOAT,
                 Tare FLOAT,
                 Net FLOAT,
-                Date TEXT
+                Date TEXT,
+                GrossTime TEXT,
+                TareTime TEXT,
+                Fees FLOAT
             )`,
             (err) => {
                 if (err) {
@@ -30,8 +33,8 @@ const db = new sqlite3.Database("truck_transactions.db", (err) => {
 
                     // Prepare the insertData statement after table creation
                     insertData = db.prepare(
-                        `INSERT INTO TruckTransactions (TruckName, SellerName, BuyerName, GoodsName, Specification, Gross, Tare, Net, Date)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+                        `INSERT INTO TruckTransactions ( TransactionID, TruckName, SellerName, BuyerName, GoodsName, Specification, Gross, Tare, Net, Date, GrossTime, TareTime, Fees)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
                     );
                 }
             }
@@ -84,6 +87,7 @@ const server = http.createServer((req, res) => {
 
             // Insert data into the TruckTransactions table
             insertData.run(
+                parsedBody.TransactionID,
                 parsedBody.TruckName,
                 parsedBody.SellerName,
                 parsedBody.BuyerName,
@@ -93,6 +97,9 @@ const server = http.createServer((req, res) => {
                 parsedBody.Tare,
                 parsedBody.Net,
                 parsedBody.Date,
+                parsedBody.GrossTime,
+                parsedBody.TareTime,
+                parsedBody.Fees,
                 (err) => {
                     if (err) {
                         console.error("Error inserting data:", err);
@@ -112,7 +119,7 @@ const server = http.createServer((req, res) => {
     }
 });
 
-const port = 3001;
+const port = 3011;
 server.listen(port, () => {
     console.log(`Server listening on http://localhost:${port}`);
 });

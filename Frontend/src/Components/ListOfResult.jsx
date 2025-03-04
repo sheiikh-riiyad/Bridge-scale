@@ -54,7 +54,12 @@ const ListOfResult = () => {
   };
 
   const print = async (item) => {
+    if (!(parseFloat(item.Gross) > 0 && parseFloat(item.Tare) > 0)) {
+      alert("Gross and Tare cannot be empty or zero for printing.");
+      return; // Prevent further processing if both fields are invalid (zero or empty)
+    }
     try {
+      
         // Step 1: Send the item data to the second database (port 3001)
         const postResponse = await fetch("http://localhost:3011", {
             method: "POST",
@@ -106,6 +111,11 @@ const ListOfResult = () => {
   };
 
   const handleSubmit = (e) => {
+
+    if (!dataToEdit.Fees) {
+      alert("You Need To Add Sclae Fees");
+      return;
+    }
     e.preventDefault();
     const method = dataToEdit.TransactionID ? "PUT" : "POST";
 
@@ -280,7 +290,7 @@ const setTareTime = () => {
       placeholder="Net Weight (calculated)"
       readOnly
     />
-    <input value={dataToEdit.Fees} onChange={handleChange} name="Fees"  style={{marginTop: "5px", width: "50px"}} type="text" placeholder="Fees" />
+    <input required value={dataToEdit.Fees} onChange={handleChange} name="Fees"  style={{marginTop: "5px", width: "50px"}} type="text" placeholder="Fees" />
 
     <input  type="text"
             placeholder="Gross Time"
@@ -296,10 +306,10 @@ const setTareTime = () => {
             readOnly 
             style={{ marginLeft: "10px" }}/>
   </Form.Group>
-  <Button onClick={setGrossTime} style={{ margin: "5px" }} variant="outline-secondary">Gross</Button>
-  <Button onClick={setTareTime} variant="outline-secondary">Tare</Button>
+  <Button  disabled={!!dataToEdit.GrossTime} onClick={setGrossTime} style={{ margin: "5px" }} variant="outline-secondary">Gross</Button>
+  <Button disabled={!!dataToEdit.TareTime} onClick={setTareTime} variant="outline-secondary">Tare</Button>
   
-  <Button onClick={handleSubmit} variant="outline-success" type="submit" className="mt-4">
+  <Button  onClick={handleSubmit} variant="outline-success" type="submit" className="mt-4">
     Save Changes
   </Button>
 </Form>

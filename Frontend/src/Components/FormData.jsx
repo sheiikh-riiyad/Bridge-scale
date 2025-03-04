@@ -54,6 +54,13 @@ function FormData() {
   // Submits form data to backend
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!dataToInsert.GrossTime && !dataToInsert.TareTime) {
+    alert("Please fill in either the Gross or Tare field.");
+    return; // Prevent form submission if both are empty
+  }
+
+  
   
     // Update Date field on form submission
     const dataWithDate = {
@@ -131,6 +138,17 @@ function FormData() {
       TareTime: getCurrentDateTime(),
     }));
   };
+
+  const resetTimes = (e) => {
+    e.preventDefault(); // Prevent form submission
+    setDataToInsert((prevData) => ({
+      ...prevData,
+      GrossTime: "",
+      TareTime: "",
+    }));
+  };
+
+ let button = <button onClick={resetTimes}>Reset</button>
 
   return (
     <div className="mt-2">
@@ -214,7 +232,7 @@ function FormData() {
             value={dataToInsert.Net}
             readOnly
           />
-        <input onChange={handleChange}  name="Fees" value={dataToInsert.Fees} style={{marginTop: "5px", width: "50px"}} type="number" placeholder="Fees" />
+        <input  onChange={handleChange}  name="Fees" value={dataToInsert.Fees} style={{marginTop: "5px", width: "50px"}} type="number" placeholder="Fees" />
 
         <input  type="text"
             placeholder="Gross Time"
@@ -227,11 +245,13 @@ function FormData() {
             name="TareTime"
             value={dataToInsert.TareTime}
             readOnly 
-            style={{ marginLeft: "10px" }}/>
+            style={{ marginLeft: "10px", marginRight: "5px" }}/>
+            <spain>{button}</spain>
         </Form.Group>
 
         <Button onClick={setGrossTime} style={{ margin: "5px" }} variant="outline-secondary">Gross</Button>
         <Button onClick={setTareTime} variant="outline-secondary">Tare</Button>
+        
 
         <Button style={{marginLeft: "10px"}} variant="outline-primary" type="submit">
           Register

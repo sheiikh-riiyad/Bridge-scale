@@ -22,7 +22,10 @@ db.run(
         Gross FLOAT,
         Tare FLOAT,
         Net FLOAT,
-        Date TEXT
+        Date TEXT,
+        GrossTime TEXT,
+        TareTime TEXT,
+        Fees FLOAT
     )`,
     (err) => {
         if (err) {
@@ -46,8 +49,8 @@ const search = (callback) => {
 
 // Prepares a query to add data to the TruckTransactions table.
 const insertData = db.prepare(
-    `INSERT INTO TruckTransactions (TruckName, SellerName, BuyerName, GoodsName, Specification, Gross, Tare, Net, Date)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO TruckTransactions (TruckName, SellerName, BuyerName, GoodsName, Specification, Gross, Tare, Net, Date, GrossTime, TareTime, Fees)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     (err) => {
         if (err) {
             console.error(err);
@@ -79,8 +82,11 @@ const modifyData = db.prepare(
           Specification = ?,
           Gross = ?,
           Tare = ?,
-          Net = ?
-     WHERE TransactionID = ?`,
+          Net = ?,
+          GrossTime = ?,
+          TareTime = ?,
+          Fees = ?
+      WHERE TransactionID = ?`,
      (err) => {
         if (err) {
             console.error(err);
@@ -124,7 +130,10 @@ const server = http.createServer((req, res) => {
                 parsedBody.Gross,
                 parsedBody.Tare,
                 parsedBody.Net,
-                parsedBody.Date
+                parsedBody.Date,
+                parsedBody.GrossTime,
+                parsedBody.TareTime,
+                parsedBody.Fees
             );
             console.log("Data created successfully.");
         });
@@ -162,6 +171,9 @@ const server = http.createServer((req, res) => {
                 parsedBody.Gross,
                 parsedBody.Tare,
                 parsedBody.Net,
+                parsedBody.GrossTime,
+                parsedBody.TareTime,
+                parsedBody.Fees,
                 parsedBody.TransactionID
             );
             console.log("Data modified successfully.");
@@ -169,8 +181,8 @@ const server = http.createServer((req, res) => {
     }
 });
 
-const port = 3000;
-const host = '0.0.0.0';
-server.listen(port, host, () => {
-  console.log(`Server listening on http://${host}:${port}`);
+const port = 3001;
+
+server.listen(port,  () => {
+  console.log(`Server listening on http://:${port}`);
 });

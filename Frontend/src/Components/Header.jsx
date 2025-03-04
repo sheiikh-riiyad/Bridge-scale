@@ -6,7 +6,7 @@ function Header() {
   return (
     <Navbar expand="lg" className="navbar ">
       <Container>
-        <Navbar.Brand href="/" className="text-white">Rio Industrial Area</Navbar.Brand>
+        <Navbar.Brand href="/" className="text-white">TALUKDER BRIDGE SCALE</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
