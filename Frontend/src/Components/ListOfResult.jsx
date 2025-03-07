@@ -32,7 +32,7 @@ const ListOfResult = () => {
         return res.json();
       })
       .then((data) => {
-        console.log("Fetched data:", data);
+       
         setResult(data);
       })
       .catch((err) => console.error("Error fetching data:", err));
@@ -169,7 +169,7 @@ const setTareTime = () => {
         <section key={item.TransactionID} className="mb-3">
           <Card>
             <Card.Body>
-              ScaleID: RIO-00{item.TransactionID} {item.Date} {item.TruckName} {item.SellerName} {item.BuyerName} {item.GoodsName} {item.Specification} {item.Gross} {item.Tare} {item.Net} {item.GrossTime} {item.TareTime} {item.Fees}
+              ScaleID: TARM-00{item.TransactionID} {item.Date} {item.TruckName} {item.SellerName} {item.BuyerName} {item.GoodsName} {item.Specification} {item.Gross} {item.Tare} {item.Net} {item.GrossTime} {item.TareTime} {item.Fees}
             </Card.Body>
           </Card>
           <div className="">

@@ -87,3 +87,19 @@ table td {
   background-color: rgb(68, 68, 251);
   transition: 0.2s;
 }
+
+
+.indicator{
+  margin-left: 50px;
+  background-color: white;
+  border: none;
+  size: 50px ;
+  font-size: 35px;
+  margin-top: -100px;
+
+}
+.indicator:focus {
+  border: 2px solid #ffffff;
+  background-color: white;
+  outline: none; /* Removes default focus outline */
+}

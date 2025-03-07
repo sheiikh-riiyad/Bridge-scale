@@ -3,20 +3,22 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
- "scripts": {
-  "start": "concurrently \"cd ../backend && nodemon server.js\" \"cd ../printed && nodemon server.js\" \"npm run dev\"",
-  "dev": "vite",
-  "build": "vite build",
-  "preview": "vite preview"
-}
-,
+  "scripts": {
+    "start": "concurrently \"cd ../backend && nodemon server.js\" \"cd ../printed && nodemon server.js\" \"npm run dev\"",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "bootstrap": "^5.3.3",
+    "formik": "^2.4.6",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.5",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.27.0",
-    "xlsx": "^0.18.5"
+    "react-router-dom": "^7.2.0",
+    "xlsx": "^0.18.5",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

@@ -12,6 +12,8 @@ function Header() {
           <Nav className="me-auto">
             <Nav.Link href="/" className="text-white">Home</Nav.Link>
             <Nav.Link href="/console" className="text-white">Console</Nav.Link> {/* Use '/console' here */}
+           
+           
           </Nav>
         </Navbar.Collapse>
       </Container>

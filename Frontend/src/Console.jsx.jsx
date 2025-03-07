@@ -37,7 +37,7 @@ function Console() {
     return res.json();
   })
   .then((data) => {
-    console.log("Data fetched:", data);
+   
     setResult(data);
   })
   .catch((err) => console.error("Error fetching data:", err));
@@ -232,7 +232,7 @@ const print = (item) => {
               {filteredResults.length > 0 ? (
                 filteredResults.map((item) => (
                   <tr key={item.TransactionID}>
-                    <td>RIO-00{item.TransactionID}</td>
+                    <td>TARM-00{item.TransactionID}</td>
                     <td>{item.Date}</td>
                     <td>{item.TruckName}</td>
                     <td>{item.SellerName}</td>
@@ -245,7 +245,7 @@ const print = (item) => {
                     <td>{item.TareTime}</td>
                     <td>{item.Net}</td>
                     <td>{item.Fees}</td>
-                    <Button onClick={() => print(item)} style={{ marginBottom: "1px" }} variant="outline-success">
+                    <Button  onClick={() => print(item)} style={{ marginBottom: "1px" }} variant="outline-success">
                       Print
                     </Button> </tr>
                 ))

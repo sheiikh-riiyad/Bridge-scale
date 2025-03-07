@@ -248,7 +248,7 @@ function FormData() {
             style={{ marginLeft: "10px", marginRight: "5px" }}/>
             <spain>{button}</spain>
         </Form.Group>
-
+        
         <Button onClick={setGrossTime} style={{ margin: "5px" }} variant="outline-secondary">Gross</Button>
         <Button onClick={setTareTime} variant="outline-secondary">Tare</Button>
         
@@ -256,8 +256,9 @@ function FormData() {
         <Button style={{marginLeft: "10px"}} variant="outline-primary" type="submit">
           Register
         </Button>
-
-       
+        
+          <spain className="indicator">0000</spain>
+        
       </Form>
     </div>
   );
