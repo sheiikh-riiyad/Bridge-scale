@@ -26,7 +26,7 @@ const ListOfResult = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3001")
+    fetch("http://localhost:8888")
       .then((res) => {
         console.log("Response status:", res.status);
         return res.json();
@@ -45,7 +45,7 @@ const ListOfResult = () => {
 
   const handleDelete = (e) => {
     if (window.confirm("Are you sure you want to delete this information?")) {
-      fetch("http://localhost:3001", {
+      fetch("http://localhost:8888", {
         method: "DELETE",
         body: JSON.stringify({ TransactionID: e.target.name }),
         headers: { "Content-Type": "application/json" },
@@ -61,28 +61,28 @@ const ListOfResult = () => {
     try {
       
         // Step 1: Send the item data to the second database (port 3001)
-        const postResponse = await fetch("http://localhost:3011", {
+        const postResponse = await fetch("http://localhost:8887", {
             method: "POST",
             body: JSON.stringify(item),
             headers: { "Content-Type": "application/json" },
         });
 
         if (!postResponse.ok) {
-            throw new Error("Failed to insert data on port 3011");
+            throw new Error("Failed to insert data on port 8887");
         }
 
         // Step 2: Remove the printed item from the frontend state
         setResult((prevResult) => prevResult.filter((data) => data.TransactionID !== item.TransactionID));
 
         // Step 3: Delete the item from the first database (port 3000)
-        const deleteResponse = await fetch("http://localhost:3001", {
+        const deleteResponse = await fetch("http://localhost:8888", {
             method: "DELETE",
             body: JSON.stringify({ TransactionID: item.TransactionID }),
             headers: { "Content-Type": "application/json" },
         });
 
         if (!deleteResponse.ok) {
-            throw new Error("Failed to delete data on port 3001");
+            throw new Error("Failed to delete data on port 8888");
         }
 
         // Navigate to the print page
@@ -119,7 +119,7 @@ const ListOfResult = () => {
     e.preventDefault();
     const method = dataToEdit.TransactionID ? "PUT" : "POST";
 
-    fetch("http://localhost:3001", {
+    fetch("http://localhost:8888", {
       method,
       body: JSON.stringify(dataToEdit),
       headers: { "Content-Type": "application/json" },

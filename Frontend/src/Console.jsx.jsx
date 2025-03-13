@@ -29,7 +29,7 @@ function Console() {
 
   const printRef = useRef();
 
-  fetch("http://localhost:3011")
+  fetch("http://localhost:8887")
   .then((res) => {
     if (!res.ok) {
       throw new Error(`HTTP error! Status: ${res.status}`);

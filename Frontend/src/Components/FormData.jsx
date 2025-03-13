@@ -28,7 +28,7 @@ function FormData() {
 
   // Fetches data from backend on page load
   useEffect(() => {
-    fetch("http://localhost:3001")
+    fetch("http://localhost:8888")
       .then((res) => res.json())
       .then((data) => {
         setResult(data);
@@ -68,7 +68,7 @@ function FormData() {
       Date: new Date().toISOString().split("T")[0] // Format: YYYY-MM-DD
     };
   
-    fetch("http://localhost:3001", {
+    fetch("http://localhost:8888", {
       method: "POST",
       body: JSON.stringify(dataWithDate),
       headers: { "Content-Type": "application/json" },

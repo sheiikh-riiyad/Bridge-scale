@@ -6,6 +6,10 @@ function PrintPage() {
   const [operator, setOperator] = useState(''); // State to store the operator's username
   const location = useLocation();
   const { item } = location.state || {};
+  const [company, setCompany] = useState(() => {
+    const savedCompany = localStorage.getItem('company');
+    return savedCompany ? JSON.parse(savedCompany) : null;
+  });
 
   useEffect(() => {
     const sessionUser = JSON.parse(sessionStorage.getItem('sessionUser'));
@@ -38,8 +42,8 @@ function PrintPage() {
         background: "#fff",
         margin: "0 auto",
       }}>
-        <h2>TALUKDER BRIDGE SCALE</h2>
-        <span>Islampur, Muraripur, Setabgonj, Dinajpur</span> <br />
+        <h2>{company.name}</h2>
+        <span>{company.address}</span> <br />
         <span>Contact: +8801710666995</span>
 
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "-5px" }}>

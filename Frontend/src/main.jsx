@@ -8,6 +8,7 @@ import Console from './Console.jsx';
 import PrintPage from './PrintPage.jsx';
 import Login from './Components/Login.jsx';
 import Register from './Components/Register.jsx';
+import Profile from './Components/Profile.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -19,6 +20,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/printpage" element={<PrintPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile/>} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </BrowserRouter>
