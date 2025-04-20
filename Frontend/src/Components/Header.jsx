@@ -49,7 +49,7 @@ function Header() {
                   marginLeft: "150px",
                   marginTop: "10px",
                   cursor: "pointer",
-                  width: "200px", // ✅ Fixed typo and added width
+                  width: "200px",
                   textAlign: "center",
 
                 }}

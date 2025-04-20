@@ -9,9 +9,11 @@ import PrintPage from './PrintPage.jsx';
 import Login from './Components/Login.jsx';
 import Register from './Components/Register.jsx';
 import Profile from './Components/Profile.jsx';
+import { AlertProvider } from "./Components/AlertContext";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    <AlertProvider>
     <BrowserRouter> 
       <Routes>
         <Route path="/" element={<App />} />
@@ -24,5 +26,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </BrowserRouter>
+    </AlertProvider>
   </React.StrictMode>
 );

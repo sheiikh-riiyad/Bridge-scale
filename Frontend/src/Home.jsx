@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import ListOfResult from './Components/ListOfResult';
 import FormData from './Components/FormData';
 import { Row, Col } from 'react-bootstrap';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Login from './Components/Login';
-import Register from './Components/Register';
+// import Modal from 'react-bootstrap/Modal';
+// import Button from 'react-bootstrap/Button';
+// import Login from './Components/Login';
+// import Register from './Components/Register';
 
 function Home() {
   const [showModal, setShowModal] = useState(true); // Default to show modal
@@ -44,7 +44,7 @@ function Home() {
       </Row>
 
       {/* Modal for Login/Register */}
-      <Modal show={showModal} backdrop="static" keyboard={false} centered>
+      {/* <Modal show={showModal} backdrop="static" keyboard={false} centered>
         <Modal.Header>
           <Modal.Title>{isLogin ? "Login" : "Register"}</Modal.Title>
         </Modal.Header>
@@ -72,7 +72,7 @@ function Home() {
             </p>
           )}
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </>
   );
 }

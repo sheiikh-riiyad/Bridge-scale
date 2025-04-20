@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { useAlert } from "./AlertContext";
+
 
 function FormData() {
   // State for form data
@@ -52,11 +54,13 @@ function FormData() {
   }, [redirected, navigate]);
 
   // Submits form data to backend
+  
+  const { showAlert } = useAlert();
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (!dataToInsert.GrossTime && !dataToInsert.TareTime) {
-    alert("Please fill in either the Gross or Tare field.");
+      showAlert("Both GrossTime and TareTime are empty!");
+      
     return; // Prevent form submission if both are empty
   }
 
@@ -152,6 +156,7 @@ function FormData() {
 
   return (
     <div className="mt-2">
+     
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="formTruckName">
           <Form.Control

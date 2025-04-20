@@ -4,6 +4,9 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import { useAlert } from "./AlertContext";
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 const ListOfResult = () => {
   const [result, setResult] = useState([]);
@@ -44,18 +47,35 @@ const ListOfResult = () => {
   };
 
   const handleDelete = (e) => {
+    const transactionId = e.target.name;
+  
     if (window.confirm("Are you sure you want to delete this information?")) {
       fetch("http://localhost:8888", {
         method: "DELETE",
-        body: JSON.stringify({ TransactionID: e.target.name }),
+        body: JSON.stringify({ TransactionID: transactionId }),
         headers: { "Content-Type": "application/json" },
-      }).then(() => window.location.reload());
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Failed to delete");
+          }
+          showAlert(`Transaction ID ${transactionId} deleted successfully.`);
+          setResult((prevResult) =>
+            prevResult.filter((item) => item.TransactionID !== parseInt(transactionId))
+          );
+        })
+        .catch((err) => {
+          console.error("Error deleting item:", err);
+          showAlert("Failed to delete. Please try again.");
+        });
     }
   };
+  
+  const { showAlert } = useAlert();
 
   const print = async (item) => {
     if (!(parseFloat(item.Gross) > 0 && parseFloat(item.Tare) > 0)) {
-      alert("Gross and Tare cannot be empty or zero for printing.");
+      showAlert("Gross and Tare cannot be empty or zero for printing.");
       return; // Prevent further processing if both fields are invalid (zero or empty)
     }
     try {
@@ -113,7 +133,7 @@ const ListOfResult = () => {
   const handleSubmit = (e) => {
 
     if (!dataToEdit.Fees) {
-      alert("You Need To Add Sclae Fees");
+      showAlert("You Need To Add Sclae Fees");
       return;
     }
     e.preventDefault();
@@ -162,10 +182,44 @@ const setTareTime = () => {
   }));
 };
 
+
+
+
+
+
+
+
+
+
+
+
+const [filterId, setFilterId] = useState(""); // <-- new state
+const handleFilterChange = (e) => {
+  setFilterId(e.target.value);
+};
+
+
+
   return (
     <div className="container">
       <h1>Logs</h1>
-      {result.map((item) => (
+      <Row>
+                  <Col xs={6} sm={4} md={3} lg={2} className="mb-2">
+                    <Form.Control
+                      size="sm"
+                      type="text"
+                      placeholder="Scale ID"
+                      name="scaleID"
+                      value={filterId}
+                      onChange={handleFilterChange}
+                    />
+                  </Col>
+      </Row>
+      {result
+  .filter((item) =>
+    filterId === "" ? true : item.TransactionID.toString().includes(filterId)
+  )
+  .map((item) => (
         <section key={item.TransactionID} className="mb-3">
           <Card>
             <Card.Body>

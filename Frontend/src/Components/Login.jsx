@@ -4,8 +4,12 @@ import * as Yup from 'yup';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import bcrypt from 'bcryptjs';
+import { useAlert } from "./AlertContext";
+
 
 function Login() {
+  const { showAlert } = useAlert();
+
   const [loginError, setLoginError] = useState('');
 
   // Validation schema
@@ -60,7 +64,7 @@ function Login() {
         JSON.stringify({ username: storedUser.username, password: values.password })
       );
 
-      alert('Login Successful!');
+      showAlert('Login Successful!');
       window.location.href = '/'; // Redirect to dashboard
     },
   });
