@@ -44,7 +44,7 @@ function PrintPage() {
       }}>
         <h2>{company.name}</h2>
         <span>{company.address}</span> <br />
-        <span>Contact: +8801710666995</span>
+        <span>Contact: {company.contact}</span>
 
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "-5px" }}>
           <p><strong>Seller Name:</strong> {item.SellerName}</p>
@@ -75,6 +75,10 @@ function PrintPage() {
           <p style={{ textAlign: "left" }}><strong>Fees BDT: {item.Fees}/-</strong></p>
         </div>
       </div>
+
+
+
+      
              <button onClick={handlePrint}>print</button>
              <button onClick={handleExit} style={{marginLeft: "5px"}}>exit</button>
     </>

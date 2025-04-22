@@ -8,6 +8,7 @@ import { useAlert } from "./AlertContext";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+
 const ListOfResult = () => {
   const [result, setResult] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -46,30 +47,30 @@ const ListOfResult = () => {
     setShowModal(true);
   };
 
-  const handleDelete = (e) => {
-    const transactionId = e.target.name;
+  // const handleDelete = (e) => {
+  //   const transactionId = e.target.name;
   
-    if (window.confirm("Are you sure you want to delete this information?")) {
-      fetch("http://localhost:8888", {
-        method: "DELETE",
-        body: JSON.stringify({ TransactionID: transactionId }),
-        headers: { "Content-Type": "application/json" },
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Failed to delete");
-          }
-          showAlert(`Transaction ID ${transactionId} deleted successfully.`);
-          setResult((prevResult) =>
-            prevResult.filter((item) => item.TransactionID !== parseInt(transactionId))
-          );
-        })
-        .catch((err) => {
-          console.error("Error deleting item:", err);
-          showAlert("Failed to delete. Please try again.");
-        });
-    }
-  };
+  //   if  (window.confirm("Are you sure you want to delete this information?")) {
+  //     fetch("http://localhost:8888", {
+  //       method: "DELETE",
+  //       body: JSON.stringify({ TransactionID: transactionId }),
+  //       headers: { "Content-Type": "application/json" },
+  //     })
+  //       .then((res) => {
+  //         if (!res.ok) {
+  //           throw new Error("Failed to delete");
+  //         }
+  //         showAlert(`Transaction ID ${transactionId} deleted successfully.`);
+  //         setResult((prevResult) =>
+  //           prevResult.filter((item) => item.TransactionID !== parseInt(transactionId))
+  //         );
+  //       })
+  //       .catch((err) => {
+  //         console.error("Error deleting item:", err);
+  //         showAlert("Failed to delete. Please try again.");
+  //       });
+  //   }
+  // };
   
   const { showAlert } = useAlert();
 
@@ -200,7 +201,76 @@ const handleFilterChange = (e) => {
 
 
 
+
+
+const [showDeleteModal, setShowDeleteModal] = useState(false);
+const [transactionToDelete, setTransactionToDelete] = useState(null);
+
+
+const handleDelete = (transactionId) => {
+  setTransactionToDelete(transactionId);
+  setShowDeleteModal(true);
+};
+
+
+
+
+const confirmDelete = () => {
+  if (!transactionToDelete) return;
+
+  fetch("http://localhost:8888", {
+    method: "DELETE",
+    body: JSON.stringify({ TransactionID: transactionToDelete }),
+    headers: { "Content-Type": "application/json" },
+  })
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error("Failed to delete");
+      }
+      showAlert(`Transaction ID ${transactionToDelete} deleted successfully.`);
+      setResult((prevResult) =>
+        prevResult.filter((item) => item.TransactionID !== parseInt(transactionToDelete))
+      );
+    })
+    .catch((err) => {
+      console.error("Error deleting item:", err);
+      showAlert("Failed to delete. Please try again.");
+    })
+    .finally(() => {
+      setShowDeleteModal(false);
+      setTransactionToDelete(null);
+    });
+};
+
+const cancelDelete = () => {
+  setShowDeleteModal(false);
+  setTransactionToDelete(null);
+};
+
+
+
+
+
   return (
+
+     <>
+<Modal show={showDeleteModal} onHide={cancelDelete} centered>
+  <Modal.Header closeButton>
+    <Modal.Title>Confirm Delete</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    Are you sure you want to delete transaction ID {transactionToDelete}?
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={cancelDelete}>
+      No
+    </Button>
+    <Button variant="danger" onClick={confirmDelete}>
+      Yes
+    </Button>
+  </Modal.Footer>
+</Modal>
+
     <div className="container">
       <h1>Logs</h1>
       <Row>
@@ -232,8 +302,8 @@ const handleFilterChange = (e) => {
             </Button>
             <Button
               className=""
-              name={item.TransactionID}
-              onClick={handleDelete}
+              // name={item.TransactionID}
+              onClick={() => handleDelete(item.TransactionID)}
               variant="outline-danger"
             >
               Delete
@@ -371,6 +441,11 @@ const handleFilterChange = (e) => {
         </Modal.Body>
       </Modal>
     </div>
+
+
+
+
+    </>
   );
 };
 
