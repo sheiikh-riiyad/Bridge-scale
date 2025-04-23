@@ -9,6 +9,11 @@ import { useNavigate } from "react-router-dom";
 function Header() {
   const [dateTime, setDateTime] = useState("");
 
+
+  const [company, setCompany] = useState(() => {
+    const savedCompany = localStorage.getItem('company');
+    return savedCompany ? JSON.parse(savedCompany) : null;
+  });
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -28,7 +33,7 @@ function Header() {
     <Navbar expand="lg" className="navbar ">
       <Container>
         <Navbar.Brand href="/" className="text-white">
-          TALUKDER BRIDGE SCALE
+          {company.name}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">

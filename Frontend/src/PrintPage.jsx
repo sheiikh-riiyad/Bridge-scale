@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './Styles/App.css';
 
 function PrintPage() {
-  const [operator, setOperator] = useState(''); // State to store the operator's username
+  // const [operator, setOperator] = useState(''); // State to store the operator's username
   const location = useLocation();
   const { item } = location.state || {};
   const [company, setCompany] = useState(() => {
@@ -11,12 +11,21 @@ function PrintPage() {
     return savedCompany ? JSON.parse(savedCompany) : null;
   });
 
-  useEffect(() => {
-    const sessionUser = JSON.parse(sessionStorage.getItem('sessionUser'));
-    if (sessionUser) {
-      setOperator(sessionUser.username); // Set the operator's username from session storage
-    }
-  }, []);  // Empty dependency array to run only once when the component mounts
+
+
+const username = sessionStorage.getItem('username');
+
+
+  
+
+  
+
+  // useEffect(() => {
+  //   const sessionUser = JSON.parse(sessionStorage.getItem('username'));
+  //   if (sessionUser) {
+  //     setOperator(username); // Set the operator's username from session storage
+  //   }
+  // }, []);  // Empty dependency array to run only once when the component mounts
 
   if (!item) {
     return <div>No data available to print.</div>;
@@ -67,11 +76,12 @@ function PrintPage() {
 
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "-5px" }}>
           <p><strong>Specification:</strong> {item.Specification} /BAG</p>
+          <p><strong>Specification:</strong> {item.Specification} /BAG</p>
           <p><strong>Net:</strong> {item.Net} KG</p>
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", }}>
-          <p style={{ textAlign: "right" }}><strong>posted by:</strong> {operator || "Unknown"}</p>
+          <p style={{ textAlign: "right" }}><strong>posted by:</strong> {username || "Unknown"}</p>
           <p style={{ textAlign: "left" }}><strong>Fees BDT: {item.Fees}/-</strong></p>
         </div>
       </div>
