@@ -7,6 +7,7 @@ import './Styles/App.css';
 import Alertbar from './Components/all alert/Alertbar'; // now this is only the UI
 import { useAlert } from './Components/AlertContext'; // context hook
 
+
 function App() {
   const { alertVisible, alertMessage } = useAlert();
 

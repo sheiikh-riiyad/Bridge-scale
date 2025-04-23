@@ -72,8 +72,8 @@ const ListOfResult = () => {
   //   }
   // };
   
-  const { showAlert } = useAlert();
 
+  const { showAlert } = useAlert();
   const print = async (item) => {
     if (!(parseFloat(item.Gross) > 0 && parseFloat(item.Tare) > 0)) {
       showAlert("Gross and Tare cannot be empty or zero for printing.");

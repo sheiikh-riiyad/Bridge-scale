@@ -4,6 +4,9 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Header from './Header';
+import { useAlert } from "./AlertContext";
+import Alertbar from './all alert/Alertbar';
+
 
 
 
@@ -18,6 +21,9 @@ const schema = yup.object().shape({
 });
 
 function Profile() {
+  
+  const { showAlert, alertVisible, alertMessage } = useAlert();
+
   const [company, setCompany] = useState(null);
   const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -59,6 +65,9 @@ function Profile() {
     setPhotoFile(e.target.files[0]);
   };
 
+  
+
+
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append('companyname', company?.name || '');
@@ -69,23 +78,26 @@ function Profile() {
     formData.append('email', data.email);
     formData.append('position', data.role);
     if (photoFile) formData.append('photo', photoFile);
-
+  
     try {
       const response = await fetch('http://localhost:8889/upload', {
         method: 'POST',
         body: formData,
       });
-
+  
       if (response.ok) {
         fetchUsers();
         handleClose();
       } else {
-        console.error('Failed to add user');
+        const errorData = await response.json();
+        showAlert(errorData.error || 'Failed to add user');
       }
     } catch (error) {
       console.error('Error adding user:', error);
+      showAlert('Error occurred while adding user');
     }
   };
+  
 
   const deleteUser = async (id) => {
     try {
@@ -103,6 +115,8 @@ function Profile() {
     } catch (error) {
       console.error('Error deleting user:', error);
     }
+
+    
   };
 
   const updateCompany = async (e) => {
@@ -127,6 +141,7 @@ function Profile() {
   return (
     <>
       <Header />
+      {alertVisible && <Alertbar message={alertMessage} />}
       <Container className="mt-5">
         <Card className="mb-4 shadow-sm">
           <Card.Body>
