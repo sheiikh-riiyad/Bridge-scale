@@ -188,6 +188,7 @@ function FormData() {
 
         <Form.Group className="mb-3" controlId="formSellerName">
           <Form.Control
+            className="seller"
             list="seller-list"
             type="text"
             placeholder="Seller Name"
@@ -196,6 +197,7 @@ function FormData() {
             onChange={handleChange}
             style={{fontFamily: "Brush Script MT, cursive"}}
           />
+            <div className= 'hidden' >Dual click For Option </div>
 
           <datalist id="seller-list">
             {sellers.map((seller, index) => (
@@ -208,6 +210,7 @@ function FormData() {
 
         <Form.Group className="mb-3" controlId="formBuyerName">
           <Form.Control
+            className="seller"
             list="buyer-list"
             type="text"
             placeholder="Buyer Name"
@@ -216,6 +219,7 @@ function FormData() {
             onChange={handleChange}
             style={{fontFamily: "Brush Script MT, cursive"}}
           />
+          <div className= 'hidden' >Dual click For Option</div>
 
           <datalist id="buyer-list">
             {buyers.map((buyer, index) => (

@@ -125,3 +125,13 @@ table td {
 body {
   overflow-y: hidden; /* Hides vertical scrollbar */
 }
+
+.hidden{
+  display: none;
+  color: aqua;
+}
+
+.seller:hover + .hidden {
+  display: block;
+ 
+}
