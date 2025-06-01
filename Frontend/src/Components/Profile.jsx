@@ -6,7 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Header from './Header';
 import { useAlert } from "./AlertContext";
 import Alertbar from './all alert/Alertbar';
-
+import { AiOutlineDeleteRow } from "react-icons/ai";
+import { IoIosPersonAdd } from "react-icons/io";
 
 
 
@@ -136,12 +137,47 @@ function Profile() {
 
 
 
+   const [seller, setSeller] = useState('');
+  const [buyer, setBuyer] = useState('');
+  const [sellers, setSellers] = useState(JSON.parse(localStorage.getItem('sellers')) || []);
+  const [buyers, setBuyers] = useState(JSON.parse(localStorage.getItem('buyers')) || []);
 
+  const addSeller = () => {
+    if (!seller.trim()) return;
+    const updatedSellers = [...sellers, seller];
+    setSellers(updatedSellers);
+    localStorage.setItem('sellers', JSON.stringify(updatedSellers));
+    setSeller('');
+  };
+
+  const addBuyer = () => {
+    if (!buyer.trim()) return;
+    const updatedBuyers = [...buyers, buyer];
+    setBuyers(updatedBuyers);
+    localStorage.setItem('buyers', JSON.stringify(updatedBuyers));
+    setBuyer('');
+  };
+
+  const deleteSeller = (index) => {
+    const updated = sellers.filter((_, i) => i !== index);
+    setSellers(updated);
+    localStorage.setItem('sellers', JSON.stringify(updated));
+  };
+
+  const deleteBuyer = (index) => {
+    const updated = buyers.filter((_, i) => i !== index);
+    setBuyers(updated);
+    localStorage.setItem('buyers', JSON.stringify(updated));
+  };
+
+  
 
   return (
     <>
       <Header />
-      {alertVisible && <Alertbar message={alertMessage} />}
+      <Row >
+        <Col>
+        {alertVisible && <Alertbar message={alertMessage} />}
       <Container className="mt-5">
         <Card className="mb-4 shadow-sm">
           <Card.Body>
@@ -218,7 +254,11 @@ function Profile() {
                 </Col>
                 <Col md={3}>
                   {/* <Button variant="outline-info" className="me-2">Edit</Button> */}
-                  <Button variant="outline-danger" onClick={()=>{ deleteUser(user.SecurityID)}}>Delete</Button>
+                  <Button variant="outline-danger" onClick={()=>{ deleteUser(user.SecurityID), showAlert("User Delete Successful")}}
+                    
+                    disabled={user.email === sessionStorage.getItem('email') }  
+                    
+                  >Delete</Button>
                 </Col>
               </Row>
             ))}
@@ -276,6 +316,86 @@ function Profile() {
 </Modal>
 
       </Container>
+
+        </Col>
+
+<Col>
+      <Container>
+        <Row>
+          {/* Seller Column */}
+          <Col>
+            <Form>
+              <Form.Label htmlFor="seller">Seller Name</Form.Label>
+              <Form.Control
+                name="seller"
+                type="text"
+                id="seller"
+                placeholder="Seller Name"
+                value={seller}
+                onChange={(e) => setSeller(e.target.value)}
+              />
+              <Button style={{ margin: '2px' }} variant="outline-info" onClick={addSeller}>
+                Add
+              </Button>
+            </Form>
+
+            {sellers.map((name, index) => (
+              <Card key={index} style={{ marginTop: '2px' }}>
+                <Card.Body
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginLeft: '2px',
+                    marginRight: '2px',
+                  }}
+                >
+                  <span>{name}</span>
+                  <AiOutlineDeleteRow style={{ cursor: 'pointer' }} onClick={() => deleteSeller(index)} />
+                </Card.Body>
+              </Card>
+            ))}
+          </Col>
+
+          {/* Buyer Column */}
+          <Col>
+            <Form>
+              <Form.Label htmlFor="buyer">Buyer Name</Form.Label>
+              <Form.Control
+                name="buyer"
+                type="text"
+                id="buyer"
+                placeholder="Buyer Name"
+                value={buyer}
+                onChange={(e) => setBuyer(e.target.value)}
+              />
+              <Button style={{ margin: '2px' }} variant="outline-info" onClick={addBuyer}>
+                Add
+              </Button>
+            </Form>
+
+            {buyers.map((name, index) => (
+              <Card key={index} style={{ marginTop: '2px' }}>
+                <Card.Body
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginLeft: '2px',
+                    marginRight: '2px',
+                  }}
+                >
+                  <span>{name}</span>
+                  <AiOutlineDeleteRow style={{ cursor: 'pointer' }} onClick={() => deleteBuyer(index)} />
+                </Card.Body>
+              </Card>
+            ))}
+          </Col>
+        </Row>
+      </Container>
+    </Col>
+      </Row>
+      
     </>
   );
 }

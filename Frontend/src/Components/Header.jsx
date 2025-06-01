@@ -14,6 +14,11 @@ function Header() {
     const savedCompany = localStorage.getItem('company');
     return savedCompany ? JSON.parse(savedCompany) : null;
   });
+
+
+  
+
+
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -33,7 +38,14 @@ function Header() {
     <Navbar expand="lg" className="navbar ">
       <Container>
         <Navbar.Brand href="/" className="text-white">
-          {company.name}
+        {company ? (
+  <>
+    <strong>{company.name}</strong>
+    
+  </>
+) : (
+  <p style={{ color: "red", fontWeight: "bold" }}>⚠ Company info not found.</p>
+)}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">

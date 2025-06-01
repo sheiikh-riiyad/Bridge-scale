@@ -40,6 +40,7 @@ const ListOfResult = () => {
         setResult(data);
       })
       .catch((err) => console.error("Error fetching data:", err));
+
   }, []);
 
   const handleEditClick = (item) => {
@@ -74,6 +75,7 @@ const ListOfResult = () => {
   
 
   const { showAlert } = useAlert();
+  
   const print = async (item) => {
     if (!(parseFloat(item.Gross) > 0 && parseFloat(item.Tare) > 0)) {
       showAlert("Gross and Tare cannot be empty or zero for printing.");
@@ -107,7 +109,10 @@ const ListOfResult = () => {
         }
 
         // Navigate to the print page
-        navigate("/printpage", { state: { item } });
+        // navigate("/printpage", { state: { item } });
+        
+        window.open(`/printpage?data=${encodeURIComponent(JSON.stringify(item))}`, '_blank');
+
     } catch (error) {
         console.error("Error handling print request:", error);
     }
@@ -250,6 +255,15 @@ const cancelDelete = () => {
 
 
 
+const maxid = ()=>{
+  fetch("http://localhost:8888/max-id")
+  .then(res => res.json())
+  .then(data => console.log("Max TransactionID:", data.maxTransactionID));
+}
+
+
+
+
 
   return (
 
@@ -273,8 +287,8 @@ const cancelDelete = () => {
 
     <div className="container">
       <h1>Logs</h1>
-      <Row>
-                  <Col xs={6} sm={4} md={3} lg={2} className="mb-2">
+      <Row style={{display: "flex"}}>
+                  <Col xs={6} sm={4} md={3} lg={2} className="mb-2" >
                     <Form.Control
                       size="sm"
                       type="text"
@@ -284,6 +298,7 @@ const cancelDelete = () => {
                       onChange={handleFilterChange}
                     />
                   </Col>
+                         <p style={{fontFamily: "Brush Script MT, cursive"}}>   </p>
       </Row>
       {result
   .filter((item) =>

@@ -56,6 +56,7 @@ function FormData() {
   // Submits form data to backend
   
   const { showAlert } = useAlert();
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!dataToInsert.GrossTime && !dataToInsert.TareTime) {
@@ -154,6 +155,21 @@ function FormData() {
 
  let button = <button onClick={resetTimes}>Reset</button>
 
+
+
+  const [sellers, setSellers] = useState([]);
+  const [buyers, setBuyers] = useState([]);
+
+  useEffect(() => {
+    const sellersFromStorage = JSON.parse(localStorage.getItem("sellers")) || [];
+    const buyersFromStorage = JSON.parse(localStorage.getItem("buyers")) || [];
+    setSellers(sellersFromStorage);
+    setBuyers(buyersFromStorage);
+  }, []);
+
+
+
+
   return (
     <div className="mt-2">
      
@@ -166,27 +182,46 @@ function FormData() {
             value={dataToInsert.TruckName}
             onChange={handleChange}
             required
+            style={{fontFamily: "Brush Script MT, cursive"}}
           />
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formSellerName">
           <Form.Control
+            list="seller-list"
             type="text"
             placeholder="Seller Name"
             name="SellerName"
             value={dataToInsert.SellerName}
             onChange={handleChange}
+            style={{fontFamily: "Brush Script MT, cursive"}}
           />
+
+          <datalist id="seller-list">
+            {sellers.map((seller, index) => (
+            <option key={index} value={seller} />
+            ))}
+          </datalist>
+
+          
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formBuyerName">
           <Form.Control
+            list="buyer-list"
             type="text"
             placeholder="Buyer Name"
             name="BuyerName"
             value={dataToInsert.BuyerName}
             onChange={handleChange}
+            style={{fontFamily: "Brush Script MT, cursive"}}
           />
+
+          <datalist id="buyer-list">
+            {buyers.map((buyer, index) => (
+            <option key={index} value={buyer} />
+            ))}
+          </datalist>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formGoodsName">
@@ -196,6 +231,7 @@ function FormData() {
             name="GoodsName"
             value={dataToInsert.GoodsName}
             onChange={handleChange}
+            style={{fontFamily: "Brush Script MT, cursive"}}
           />
         </Form.Group>
 
@@ -206,6 +242,7 @@ function FormData() {
             name="Specification"
             value={dataToInsert.Specification}
             onChange={handleChange}
+            style={{fontFamily: "Brush Script MT, cursive"}}
           />
         </Form.Group>
 
@@ -216,6 +253,7 @@ function FormData() {
             name="Gross"
             value={dataToInsert.Gross}
             onChange={handleChange}
+            style={{fontFamily: "Brush Script MT, cursive"}}
           />
         </Form.Group>
 
@@ -226,6 +264,7 @@ function FormData() {
             name="Tare"
             value={dataToInsert.Tare}
             onChange={handleChange}
+            style={{fontFamily: "Brush Script MT, cursive"}}
           />
         </Form.Group>
 
@@ -236,21 +275,23 @@ function FormData() {
             name="Net"
             value={dataToInsert.Net}
             readOnly
+            style={{fontFamily: "Brush Script MT, cursive"}}
           />
-        <input  onChange={handleChange}  name="Fees" value={dataToInsert.Fees} style={{marginTop: "5px", width: "50px"}} type="number" placeholder="Fees" />
+        <input  onChange={handleChange}  name="Fees" value={dataToInsert.Fees} style={{marginTop: "5px", width: "80px", fontFamily: "Brush Script MT, cursive"}} type="number" placeholder="Fees" />
 
         <input  type="text"
             placeholder="Gross Time"
             name="GrossTime"
             value={dataToInsert.GrossTime}
             readOnly 
-            style={{ marginLeft: "10px" }}  />
+            style={{ marginLeft: "10px",fontFamily: "Brush Script MT, cursive" }}
+             />
         <input  type="text"
             placeholder="Tare Time"
             name="TareTime"
             value={dataToInsert.TareTime}
             readOnly 
-            style={{ marginLeft: "10px", marginRight: "5px" }}/>
+            style={{ marginLeft: "10px", marginRight: "5px",fontFamily: "Brush Script MT, cursive" }}/>
             <spain>{button}</spain>
         </Form.Group>
         

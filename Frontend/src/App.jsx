@@ -16,6 +16,10 @@ function App() {
       <Header />
       {alertVisible && <Alertbar message={alertMessage} />}
       <Home />
+      <p style={{ marginTop: "-20px", fontSize: "10px", color: "#111", paddingBottom: "-20px"}}>
+              <spain> whatsapp:+8801710666995</spain><br/>
+              © 2024 Blueheartdev.com. All rights reserved. 
+        </p>
     </>
   );
 }

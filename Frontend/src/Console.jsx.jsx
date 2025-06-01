@@ -88,7 +88,9 @@ function Console() {
  
 const navigate = useNavigate();
 const print = (item) => {
-  navigate("/printpage", { state: { item } });
+  // navigate("/printpage", { state: { item } });
+  window.open(`/printpage?data=${encodeURIComponent(JSON.stringify(item))}`, '_blank');
+
 };
 
   return (
@@ -109,6 +111,17 @@ const print = (item) => {
                 onChange={handleFilterChange}
               />
             </Col>
+            <Col xs={6} sm={4} md={3} lg={2} className="mb-2">
+              <Form.Control
+                size="sm"
+                type="text"
+                placeholder="truckName"
+                name="truckName"
+                value={filters.truckName}
+                onChange={handleFilterChange}
+              />
+            </Col>
+
             <Col xs={6} sm={4} md={3} lg={2} className="mb-2">
               <Form.Control
                 size="sm"
@@ -246,7 +259,8 @@ const print = (item) => {
                     <td>{item.Fees}</td>
                     <Button  onClick={() => print(item)} style={{ marginBottom: "1px" }} variant="outline-success">
                       Print
-                    </Button> </tr>
+                    </Button> 
+                    </tr>
                 ))
               ) : (
                 <tr>
