@@ -138,10 +138,10 @@ const ListOfResult = () => {
 
   const handleSubmit = (e) => {
 
-    if (!dataToEdit.Fees) {
-      showAlert("You Need To Add Sclae Fees");
-      return;
-    }
+if (dataToEdit.Fees === '' || dataToEdit.Fees == null) {
+  showAlert("You Need To Add Scale Fees");
+  return;
+}
     e.preventDefault();
     const method = dataToEdit.TransactionID ? "PUT" : "POST";
 
@@ -217,7 +217,8 @@ const handleDelete = (transactionId) => {
   setShowDeleteModal(true);
 };
 
-
+const [showPrintModal, setShowPrintModal] = useState(false);
+const [itemToPrint, setItemToPrint] = useState(null);
 
 
 const confirmDelete = () => {
@@ -255,15 +256,30 @@ const cancelDelete = () => {
 
 
 
-const maxid = ()=>{
-  fetch("http://localhost:8888/max-id")
-  .then(res => res.json())
-  .then(data => console.log("Max TransactionID:", data.maxTransactionID));
-}
 
 
 
 
+  const [company, setCompany] = useState(() => {
+    const savedCompany = localStorage.getItem('company');
+    return savedCompany ? JSON.parse(savedCompany) : null;
+  });
+
+
+
+
+   const [sellers, setSellers] = useState([]);
+   const [buyers, setBuyers] = useState([]);
+   const [products, setProducts] = useState([]);
+  
+    useEffect(() => {
+      const sellersFromStorage = JSON.parse(localStorage.getItem("sellers")) || [];
+      const buyersFromStorage = JSON.parse(localStorage.getItem("buyers")) || [];
+      const productsFromStorage = JSON.parse(localStorage.getItem("products")) || [];
+      setSellers(sellersFromStorage);
+      setBuyers(buyersFromStorage);
+      setProducts(productsFromStorage);
+    }, []);
 
   return (
 
@@ -285,8 +301,43 @@ const maxid = ()=>{
   </Modal.Footer>
 </Modal>
 
+<Modal show={showPrintModal} onHide={() => setShowPrintModal(false)} centered>
+  <Modal.Header closeButton>
+    <Modal.Title>Confirm Print</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    Are you sure, you want to print this transaction?
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowPrintModal(false)}>
+      No
+    </Button>
+    <Button
+      variant="success"
+      onClick={() => {
+        print(itemToPrint);               // Run the actual print
+        setShowPrintModal(false);         // Close modal
+        setItemToPrint(null);             // Clear state
+      }}
+    >
+      Yes, Print
+    </Button>
+  </Modal.Footer>
+</Modal>
+
+
+
+
+
     <div className="container">
-      <h1>Logs</h1>
+      {company ? (
+  <>
+    <strong>{company.name}</strong>
+    
+  </>
+) : (
+  <p style={{ color: "red", fontWeight: "bold" }}>⚠ Company info not found.</p>
+)}
       <Row style={{display: "flex"}}>
                   <Col xs={6} sm={4} md={3} lg={2} className="mb-2" >
                     <Form.Control
@@ -308,7 +359,7 @@ const maxid = ()=>{
         <section key={item.TransactionID} className="mb-3">
           <Card>
             <Card.Body>
-              ScaleID: TARM-00{item.TransactionID} {item.Date} {item.TruckName} {item.SellerName} {item.BuyerName} {item.GoodsName} {item.Specification} {item.Gross} {item.Tare} {item.Net} {item.GrossTime} {item.TareTime} {item.Fees}
+              ScaleID: TARM-00{ item.TransactionID} | {item.Date} | {item.TruckName} | {item.SellerName} | {item.BuyerName} | {item.GoodsName} | {item.Specification} | {item.Gross} | {item.Tare} | {item.Net} | {item.GrossTime} | {item.TareTime} | {item.Fees}
             </Card.Body>
           </Card>
           <div className="">
@@ -323,13 +374,17 @@ const maxid = ()=>{
             >
               Delete
             </Button>
-            <Button
-              className=""
-              variant="outline-success"
-              onClick={() => print(item)} // Pass the item data
-            >
-              Print
-            </Button>
+
+<Button
+  className=""
+  variant="outline-success"
+  onClick={() => {
+    setItemToPrint(item);         // Save the item to print
+    setShowPrintModal(true);      // Show the modal
+  }}
+>
+  Print
+</Button>
           </div>
         </section>
       ))}
@@ -358,16 +413,26 @@ const maxid = ()=>{
     <Form.Control
       type="text"
       name="SellerName"
+      list="seller-list"
       value={dataToEdit.SellerName}
       onChange={handleChange}
       placeholder="Enter Seller Name"
     />
   </Form.Group>
 
+           <datalist id="seller-list">
+            {sellers.map((seller, index) => (
+            <option key={index} value={seller} />
+            ))}
+          </datalist>
+
+
+
   <Form.Group controlId="formBuyerName" className="mt-3">
     <Form.Label>Buyer Name</Form.Label>
     <Form.Control
       type="text"
+      list="buyer-list"
       name="BuyerName"
       value={dataToEdit.BuyerName}
       onChange={handleChange}
@@ -375,15 +440,31 @@ const maxid = ()=>{
     />
   </Form.Group>
 
+
+
+
+          <datalist id="buyer-list">
+            {buyers.map((buyer, index) => (
+            <option key={index} value={buyer} />
+            ))}
+          </datalist>
+
   <Form.Group controlId="formGoodsName" className="mt-3">
     <Form.Label>Goods Name</Form.Label>
     <Form.Control
       type="text"
       name="GoodsName"
+      list="product-list"
       value={dataToEdit.GoodsName}
       onChange={handleChange}
       placeholder="Enter Goods Name"
     />
+
+          <datalist id="product-list">
+            {products.map((product, index) => (
+            <option key={index} value={product} />
+            ))}
+          </datalist>
   </Form.Group>
 
   <Form.Group controlId="formSpecification" className="mt-3">

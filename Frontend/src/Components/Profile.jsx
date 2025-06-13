@@ -137,10 +137,14 @@ function Profile() {
 
 
 
-   const [seller, setSeller] = useState('');
+  const [seller, setSeller] = useState('');
   const [buyer, setBuyer] = useState('');
+  const [product, setProduct] = useState('');
+  const [truck, setTruck] = useState('');
   const [sellers, setSellers] = useState(JSON.parse(localStorage.getItem('sellers')) || []);
   const [buyers, setBuyers] = useState(JSON.parse(localStorage.getItem('buyers')) || []);
+  const [products, setProducts] = useState(JSON.parse(localStorage.getItem('products')) || []);
+  const [trucks, setTrucks] = useState(JSON.parse(localStorage.getItem('trucks')) || []);
 
   const addSeller = () => {
     if (!seller.trim()) return;
@@ -149,6 +153,24 @@ function Profile() {
     localStorage.setItem('sellers', JSON.stringify(updatedSellers));
     setSeller('');
   };
+
+  const addProduct = () => {
+    if (!product.trim()) return;
+    const updatedProducts = [...products, product];
+    setProducts(updatedProducts);
+    localStorage.setItem('products', JSON.stringify(updatedProducts));
+    setProduct('');
+  };
+
+  const addTruck = () => {
+    if (!truck.trim()) return;
+    const updatedTrucks = [...trucks, truck];
+    setTrucks(updatedTrucks);
+    localStorage.setItem('trucks', JSON.stringify(updatedTrucks));
+    setTruck('');
+  };
+  
+  
 
   const addBuyer = () => {
     if (!buyer.trim()) return;
@@ -163,6 +185,18 @@ function Profile() {
     setSellers(updated);
     localStorage.setItem('sellers', JSON.stringify(updated));
   };
+
+const deleteProduct = (index) => {
+  const updated = products.filter((_, i) => i !== index);
+  setProducts(updated);
+  localStorage.setItem('products', JSON.stringify(updated));
+};
+
+const deleteTruck = (index) => {
+  const updated = trucks.filter((_, i) => i !== index);
+  setTrucks(updated);
+  localStorage.setItem('trucks', JSON.stringify(updated));
+};
 
   const deleteBuyer = (index) => {
     const updated = buyers.filter((_, i) => i !== index);
@@ -368,6 +402,7 @@ function Profile() {
                 placeholder="Buyer Name"
                 value={buyer}
                 onChange={(e) => setBuyer(e.target.value)}
+                
               />
               <Button style={{ margin: '2px' }} variant="outline-info" onClick={addBuyer}>
                 Add
@@ -393,9 +428,95 @@ function Profile() {
           </Col>
         </Row>
       </Container>
+
+
+
+
+
+                <Container>
+                  <Row>
+                    <Col>
+            <Form>
+                <Form.Label htmlFor="Product">Product Name</Form.Label>
+                <Form.Control
+                name="Product"
+                type="text"
+                id="Product"
+                placeholder="Product Name"
+                value={product}
+                onChange={(e) => setProduct(e.target.value)}
+                
+                
+              />
+              <Button style={{ margin: '2px' }} variant="outline-info" onClick={addProduct}>
+                Add
+              </Button>
+            </Form>
+
+
+
+              {products.map((name, index) => (
+              <Card key={index} style={{ marginTop: '2px' }}>
+                <Card.Body
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginLeft: '2px',
+                    marginRight: '2px',
+                  }}
+                >
+                  <span>{name}</span>
+                  <AiOutlineDeleteRow style={{ cursor: 'pointer' }} onClick={() => deleteProduct(index)} />
+                </Card.Body>
+              </Card>
+            ))}
+                    </Col>
+                    <Col>
+
+               <Form.Label htmlFor="Truck">Truck Name</Form.Label>
+                <Form.Control
+                name="Truck"
+                type="text"
+                id="Truck"
+                placeholder="Truck Name"
+                value={truck}
+                onChange={(e)=> setTruck(e.target.value)}
+                
+              />
+              <Button style={{ margin: '2px' }} variant="outline-info" onClick={addTruck}>
+                Add
+              </Button>
+
+
+            {trucks.map((name, index) => (
+              <Card key={index} style={{ marginTop: '2px' }}>
+                <Card.Body
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginLeft: '2px',
+                    marginRight: '2px',
+                  }}
+                >
+                  <span>{name}</span>
+                  <AiOutlineDeleteRow style={{ cursor: 'pointer' }} onClick={() => deleteTruck(index)} />
+                </Card.Body>
+              </Card>
+            ))}
+                    </Col>
+                  </Row>
+                </Container>
+
+
+
     </Col>
       </Row>
       
+
+
+
     </>
   );
 }

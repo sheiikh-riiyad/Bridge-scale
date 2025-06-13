@@ -6,6 +6,10 @@ import { useAlert } from "./AlertContext";
 
 
 function FormData() {
+
+
+
+  
   // State for form data
   const [result, setResult] = useState([]);
   const [dataToInsert, setDataToInsert] = useState({
@@ -159,12 +163,18 @@ function FormData() {
 
   const [sellers, setSellers] = useState([]);
   const [buyers, setBuyers] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [trucks, setTrucks] = useState([]);
 
   useEffect(() => {
     const sellersFromStorage = JSON.parse(localStorage.getItem("sellers")) || [];
     const buyersFromStorage = JSON.parse(localStorage.getItem("buyers")) || [];
+    const productsFromStorage = JSON.parse(localStorage.getItem("products")) || [];
+    const trucksFromStorage = JSON.parse(localStorage.getItem("trucks")) || [];
     setSellers(sellersFromStorage);
     setBuyers(buyersFromStorage);
+    setProducts(productsFromStorage);
+    setTrucks(trucksFromStorage);
   }, []);
 
 
@@ -181,9 +191,16 @@ function FormData() {
             name="TruckName"
             value={dataToInsert.TruckName}
             onChange={handleChange}
+            list="truck-list"
             required
             style={{fontFamily: "Brush Script MT, cursive"}}
           />
+
+          <datalist id="truck-list">
+            {trucks.map((truck, index) => (
+            <option key={index} value={truck} />
+            ))}
+          </datalist>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formSellerName">
@@ -233,10 +250,18 @@ function FormData() {
             type="text"
             placeholder="Goods Name"
             name="GoodsName"
+            list="product-list"
             value={dataToInsert.GoodsName}
             onChange={handleChange}
             style={{fontFamily: "Brush Script MT, cursive"}}
           />
+
+
+          <datalist id="product-list">
+            {products.map((product, index) => (
+            <option key={index} value={product} />
+            ))}
+          </datalist>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formSpecification">
